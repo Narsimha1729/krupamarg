@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Krupamarg · कृपामार्ग</title>
 <meta name="description" content="Register your sankalp, follow a daily puja, vrat and daan plan until your deadline, with live panchang and planet positions.">
-<meta name="theme-color" content="#5A1712">
+<meta name="theme-color" content="#FFF8F1">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -14,121 +14,185 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Krupamarg">
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&family=Rozha+One&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: one phone-width app column, centred on wide screens; screens swap inside it, bottom tab bar after registration. */
+/* ===== Krupamarg design system · peach & cream =====
+   Tokens first; every component below reads only from these. */
 :root{
-  --bg:#F6EFE6; --surface:#FFFFFF; --sunk:#EFE4D6; --line:#E3D3C0;
-  --fg:#2A1711; --muted:#6E5242; --maroon:#5A1712; --onmaroon:#FFF4E6; --gold:#E9A33A;
-  --accent:#A3410A; --onaccent:#FFFFFF; --ok:#2B6A63; --okbg:#E1EFEC; --warn:#8A3A06; --warnbg:#FCEBDD;
-  --display:'Rozha One', 'Tiro Devanagari Hindi', Georgia, serif;
-  --body:'Mukta', 'Noto Sans Devanagari', system-ui, sans-serif;
-  --r:14px; color-scheme:light;
+  /* surfaces */
+  --page:#FFF8F1; --bg:#FFF8F1; --bg2:#F9EFE5; --surface:#FFFFFF; --sunk:#F9EFE5; --peach:#EFC6AE; --peach-soft:#F8E2D4;
+  /* ink */
+  --fg:#34271F; --muted:#80695B; --line:#EAD9CB;
+  /* brand */
+  --terracotta:#B96F50; --accent:#A35C3E; --onaccent:#FFFFFF; --gold:#D2A45B; --mandala:#D2A45B;
+  /* status (text shades darkened for 4.5:1 on their tints) */
+  --ok:#4E6B55; --okbg:#E8F0E9; --warn:#8A5E22; --warnbg:#FBEFDD; --err:#A2483F; --errbg:#F9E5E2;
+  /* type */
+  --display:'Lora', 'Noto Serif Devanagari', Georgia, serif;
+  --body:'Manrope', 'Noto Sans Devanagari', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* shape & depth */
+  --r:18px; --r-sm:12px; --r-pill:999px;
+  --shadow:0 1px 2px rgba(52,39,31,.04), 0 6px 20px rgba(185,111,80,.07);
+  --shadow-lg:0 12px 40px rgba(185,111,80,.14);
+  --hero-grad:linear-gradient(150deg,#F8E2D4 0%,#F4D3BF 46%,#FBEBDD 100%);
+  color-scheme:light;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none}
-body{background:var(--page);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
-/* App shell: fixed app bar + scrolling content + fixed tab bar. Full screen on phones, a centred phone frame on wide screens. */
+body{background:var(--page);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
+
+/* ----- shell: fixed app bar + scrolling content + fixed tab bar ----- */
 .shell{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
-.appbar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--bg);border-bottom:1px solid var(--line);
-  padding:calc(8px + env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) 8px max(16px, env(safe-area-inset-left,0px));min-height:56px}
-.brand{display:flex;align-items:center;gap:8px;font-family:var(--display);font-size:20px;color:var(--maroon);user-select:none}
-.brand i{width:30px;height:30px;border-radius:50%;background:var(--maroon);color:var(--gold);display:grid;place-items:center;font-style:normal;font-size:16px}
-@media (min-width:600px){.shell{inset:auto;top:24px;bottom:24px;left:50%;transform:translateX(-50%);width:440px;border-radius:26px;border:1px solid var(--line);box-shadow:0 10px 36px rgba(90,23,18,.10)}}
-:root{--page:#FCF9F4; --mandala:#C9962E}
-.mandala{position:fixed;right:-140px;bottom:-140px;width:460px;max-width:none;height:460px;color:var(--mandala);opacity:.16;z-index:0;pointer-events:none}
-.mandala.tl{right:auto;bottom:auto;left:-170px;top:-170px;width:380px;height:380px;opacity:.1}
+@media (min-width:600px){.shell{inset:auto;top:24px;bottom:24px;left:50%;transform:translateX(-50%);width:440px;border-radius:28px;border:1px solid var(--line);box-shadow:var(--shadow-lg)}}
+.appbar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;background:color-mix(in srgb, var(--bg) 92%, transparent);border-bottom:1px solid var(--line);
+  padding:calc(10px + env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) 10px max(16px, env(safe-area-inset-left,0px));min-height:60px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:600;font-size:22px;letter-spacing:-.01em;color:var(--fg);user-select:none}
+.brand i,.mark{border-radius:50%;background:linear-gradient(145deg,#C88464,var(--accent));color:#FFF3E3;display:grid;place-items:center;font-style:normal;font-family:var(--display);flex:none;box-shadow:inset 0 0 0 2px rgba(210,164,91,.55)}
+.brand i{width:34px;height:34px;font-size:17px}
+.mark{width:56px;height:56px;font-size:28px}
 .app{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
-  padding:16px max(16px, env(safe-area-inset-right,0px)) 28px max(16px, env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
-.music{flex:none;
-  min-height:38px;border-radius:999px;background:var(--surface);color:var(--accent);border:1px solid var(--line);padding:0 14px;font-size:14px;box-shadow:0 4px 14px rgba(90,23,18,.08)}
-.music[aria-pressed="true"]{background:var(--accent);color:var(--onaccent);border-color:var(--accent)}
-.ganesh{width:150px;height:auto;color:var(--gold);align-self:center}
-.ganesh-hero{background:var(--maroon);border-radius:20px;padding:18px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--onmaroon);text-align:center}
-.proto{font-size:12.5px;color:var(--muted);text-align:center;background:var(--sunk);border-radius:999px;padding:4px 12px}
-h1,h2,h3{margin:0;text-wrap:balance}
-h1{font-family:var(--display);font-weight:400;font-size:30px;line-height:1.12}
-h2{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.2}
-h3{font-size:17px;font-weight:700}
+  padding:18px max(16px, env(safe-area-inset-right,0px)) 32px max(16px, env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:16px}
+.mandala{position:fixed;right:-140px;bottom:-140px;width:460px;max-width:none;height:460px;color:var(--mandala);opacity:.18;z-index:0;pointer-events:none}
+.mandala.tl{right:auto;bottom:auto;left:-170px;top:-170px;width:380px;height:380px;opacity:.12}
+
+/* ----- type ----- */
+h1,h2,h3{margin:0;text-wrap:balance;color:var(--fg)}
+h1{font-family:var(--display);font-weight:600;font-size:28px;line-height:1.18;letter-spacing:-.01em}
+h2{font-family:var(--display);font-weight:600;font-size:21px;line-height:1.25}
+h3{font-size:17px;font-weight:700;line-height:1.3}
 p{margin:0}
-.muted{color:var(--muted)} .small{font-size:13.5px} .tiny{font-size:12.5px}
-.eyebrow{font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.muted{color:var(--muted)} .small{font-size:14px} .tiny{font-size:12.5px;line-height:1.45}
+.eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.dev{font-family:'Noto Sans Devanagari',var(--body)}
+
+/* ----- layout helpers ----- */
 .stack{display:flex;flex-direction:column;gap:12px}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+
+/* ----- cards ----- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0;box-shadow:var(--shadow)}
 .card.row{flex-direction:row}
-button.card{text-align:left}
-.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
-.hero{background:var(--maroon);color:var(--onmaroon);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:8px}
-.hero .muted{color:color-mix(in srgb, var(--onmaroon) 78%, transparent)}
-.mark{width:56px;height:56px;border-radius:50%;background:var(--maroon);color:var(--gold);display:grid;place-items:center;font-family:var(--display);font-size:30px;flex:none}
-button,.btn{font:inherit;cursor:pointer;border-radius:12px;min-height:48px;padding:0 16px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font-weight:600}
-.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
-.btn-ghost{background:transparent;border:none;color:var(--accent);min-height:36px;padding:0;font-weight:600;align-self:flex-start}
+button.card{text-align:left;font-weight:400;transition:transform .12s ease, box-shadow .12s ease}
+button.card:active{transform:scale(.985)}
+.card-head{display:flex;align-items:center;gap:12px}
+.card-head h3{flex:1}
+.ico{width:40px;height:40px;border-radius:50%;background:var(--peach-soft);color:var(--terracotta);display:grid;place-items:center;flex:none}
+.ico svg{width:22px;height:22px}
+.tile{gap:6px;min-height:118px;justify-content:space-between}
+.tile .ico{width:36px;height:36px} .tile .ico svg{width:20px;height:20px}
+.tile strong{font-size:17px;color:var(--fg);line-height:1.25}
+.tile .big{font-family:var(--display);font-size:24px;color:var(--accent)}
+
+/* hero (sankalp countdown) — peach gradient with sunrise-and-temple art */
+.hero{position:relative;overflow:hidden;background:var(--hero-grad);color:var(--fg);border-radius:22px;padding:20px 18px 18px;display:flex;flex-direction:column;gap:8px;border:1px solid #F0D5C3;box-shadow:var(--shadow)}
+.hero>*{position:relative;z-index:1}
+.hero .art{position:absolute;inset:auto 0 0 auto;width:72%;height:auto;z-index:0;pointer-events:none}
+.hero .muted{color:#6E584B}
+.hero .eyebrow{color:var(--accent)}
+.count{font-family:var(--display);font-weight:600;font-size:56px;line-height:1;color:var(--accent);letter-spacing:-.02em}
+.hero .bar{background:rgba(255,255,255,.7);height:8px}
+.hero .bar b{background:linear-gradient(90deg,var(--gold),var(--terracotta))}
+
+/* welcome hero */
+.ganesh-hero{position:relative;overflow:hidden;background:var(--hero-grad);border:1px solid #F0D5C3;border-radius:24px;padding:22px 16px 18px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;box-shadow:var(--shadow)}
+.ganesh-hero h1{font-size:34px}
+.ganesh-hero .tag{color:var(--accent);font-weight:600}
+.ganesh{width:140px;height:auto;color:var(--terracotta);align-self:center}
+
+/* ----- buttons & controls ----- */
+button,.btn{font:inherit;cursor:pointer;border-radius:14px;min-height:48px;padding:0 18px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font-weight:700;font-size:15.5px;transition:background .15s, border-color .15s, transform .1s}
+button:active,.btn:active{transform:scale(.98)}
+@media (hover:hover){button:hover,.btn:hover{border-color:var(--peach)} .btn-primary:hover{background:#934F33;border-color:#934F33}}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent);box-shadow:0 4px 14px rgba(163,92,62,.22)}
+.btn-ghost{background:transparent;border:none;color:var(--accent);min-height:40px;padding:0;font-weight:700;align-self:flex-start;box-shadow:none}
 .btn-block{width:100%}
-button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-button[disabled]{opacity:.45;cursor:not-allowed}
-label.field{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:600}
-label.field span.opt{font-weight:400;color:var(--muted)}
-input,select,textarea{font:inherit;font-weight:400;min-height:46px;border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--surface);color:var(--fg);width:100%}
-textarea{min-height:76px;resize:vertical}
-.check{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.music{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:40px;border-radius:var(--r-pill);background:var(--surface);color:var(--fg);border:1px solid var(--line);padding:0 14px;font-size:14px;font-weight:600;box-shadow:var(--shadow)}
+.music svg{width:16px;height:16px;color:var(--terracotta)}
+.music[aria-pressed="true"]{background:var(--peach-soft);border-color:var(--peach);color:var(--accent)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid color-mix(in srgb, var(--terracotta) 55%, transparent);outline-offset:2px}
+button[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
+label.field{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700}
+label.field span.opt{font-weight:500;color:var(--muted)}
+input,select,textarea{font:inherit;font-weight:500;font-size:16px;min-height:48px;border:1.5px solid var(--line);border-radius:var(--r-sm);padding:10px 14px;background:var(--surface);color:var(--fg);width:100%;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--terracotta)}
+input::placeholder,textarea::placeholder{color:#A8958A}
+textarea{min-height:84px;resize:vertical}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14.5px}
 .check input{width:22px;height:22px;min-height:0;flex:none;margin-top:1px;accent-color:var(--accent)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{min-height:38px;border-radius:999px;padding:0 14px;font-weight:500;font-size:15px}
-.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
-.pill{display:inline-flex;align-items:center;border-radius:999px;padding:2px 10px;font-size:12.5px;font-weight:600;background:var(--sunk);color:var(--muted)}
+.chip{min-height:40px;border-radius:var(--r-pill);padding:0 16px;font-weight:600;font-size:14.5px}
+.chip[aria-pressed="true"]{background:var(--peach-soft);border-color:var(--terracotta);color:var(--accent)}
+.pill{display:inline-flex;align-items:center;border-radius:var(--r-pill);padding:3px 11px;font-size:12.5px;font-weight:700;background:var(--sunk);color:var(--muted);white-space:nowrap}
 .pill.ok{background:var(--okbg);color:var(--ok)} .pill.warn{background:var(--warnbg);color:var(--warn)}
 .steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .steps i{height:6px;border-radius:9px;background:var(--line);display:block}
-.steps i.on{background:var(--accent)}
-.select-card{text-align:left;display:flex;gap:12px;align-items:flex-start;padding:14px;min-height:0;font-weight:400}
-.select-card[aria-pressed="true"]{border:2.5px solid var(--accent);background:color-mix(in srgb, var(--accent) 8%, var(--surface))}
-.tick{width:24px;height:24px;border-radius:7px;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:14px;color:var(--onaccent)}
+.steps i.on{background:var(--terracotta)}
+.select-card{text-align:left;display:flex;gap:12px;align-items:flex-start;padding:16px;min-height:0;font-weight:400}
+.select-card[aria-pressed="true"]{border:2px solid var(--terracotta);background:#FFF7F1}
+.tick{width:24px;height:24px;border-radius:8px;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:14px;color:var(--onaccent)}
 [aria-pressed="true"] .tick{background:var(--accent);border-color:var(--accent)}
-.avatar{width:46px;height:46px;border-radius:50%;background:var(--sunk);display:grid;place-items:center;font-weight:700;color:var(--accent);flex:none}
+.avatar{width:46px;height:46px;border-radius:50%;background:var(--peach-soft);display:grid;place-items:center;font-weight:700;color:var(--accent);flex:none}
 .bar{height:8px;border-radius:9px;background:var(--sunk);overflow:hidden}
-.bar b{display:block;height:100%;background:var(--accent);border-radius:9px}
-.count{font-family:var(--display);font-size:52px;line-height:1;color:var(--gold)}
-.todo{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
-.todo:last-child{border-bottom:none}
-.todo input{width:22px;height:22px;min-height:0;flex:none;margin-top:2px;accent-color:var(--ok)}
+.bar b{display:block;height:100%;background:var(--terracotta);border-radius:9px}
+
+/* devotion checklist */
+.todo{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.todo:last-child{border-bottom:none;padding-bottom:2px}
+.todo input{appearance:none;-webkit-appearance:none;width:24px;height:24px;min-height:0;flex:none;margin:0;border:1.8px solid #CDB6A5;border-radius:7px;background:var(--surface);display:grid;place-items:center;padding:0;cursor:pointer}
+.todo input:checked{background:var(--ok);border-color:var(--ok)}
+.todo input:checked::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.4px 2.4px 0;transform:translateY(-1px) rotate(45deg)}
 .todo .when{font-size:12.5px;color:var(--muted)}
 .done-text{text-decoration:line-through;color:var(--muted)}
-.tabs{flex:none;background:var(--surface);border-top:1px solid var(--line);user-select:none;
+.kind{flex:none;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:var(--r-pill);padding:3px 9px;background:var(--sunk);color:var(--muted);margin-top:1px}
+.k-Vrat{background:#FBEFDD;color:#8A5E22} .k-Pooja{background:#F8E2D4;color:#93512F} .k-Daan{background:var(--okbg);color:var(--ok)} .k-Jap{background:#F6EBD8;color:#7A5A22} .k-Puja{background:#EEF1F4;color:#4D5A66}
+.day-head{margin-top:12px;font-size:13px;font-weight:800;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:6px}
+
+/* panchang summary grid with divider */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 0;width:100%}
+.pgrid>span{padding:0 14px}
+.pgrid>span:nth-child(odd){padding-left:0;border-right:1px solid var(--line)}
+.pgrid .k{display:block;font-size:13px;color:var(--muted)} .pgrid strong{font-size:15.5px}
+
+/* ----- tab bar ----- */
+.tabs{flex:none;background:var(--surface);border-top:1px solid var(--line);user-select:none;box-shadow:0 -6px 20px rgba(185,111,80,.06);
   padding:6px max(8px, env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(8px, env(safe-area-inset-left,0px));z-index:5}
 .tabs[hidden]{display:none}
-.tabs .in{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
-.tabs button{border:none;background:transparent;min-height:50px;padding:0;font-size:13px;font-weight:500;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-.tabs button[aria-current="page"]{color:var(--accent);font-weight:700}
+.tabs .in{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}
+.tabs button{border:none;background:transparent;box-shadow:none;min-height:56px;padding:4px 0 2px;font-size:12.5px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:14px}
+.tabs button span.ti{width:52px;height:30px;border-radius:var(--r-pill);display:grid;place-items:center;transition:background .2s}
 .tabs svg{width:22px;height:22px}
-.mantra{width:min(260px,70vw);aspect-ratio:1;max-width:100%;border-radius:50%;border:10px solid var(--gold);background:var(--accent);color:var(--onaccent);display:flex;flex-direction:column;align-items:center;justify-content:center;align-self:center}
-.mantra .n{font-size:68px;font-weight:700;line-height:1}
-.video{height:150px;border-radius:12px;background:var(--maroon);color:var(--onmaroon);display:grid;place-items:center;font-size:13px}
-.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14.5px}
-.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:600;min-width:0;overflow-wrap:anywhere}
-.otp{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
-.otp input{text-align:center;font-size:22px;font-weight:700;padding:0}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:9;max-width:90vw}
-.demo{font-size:13px;background:var(--warnbg);color:var(--warn);border-radius:12px;padding:8px 12px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.demo button{min-height:34px;font-size:13px;padding:0 10px}
-.notice{background:var(--sunk);border-radius:12px;padding:10px 12px;font-size:13.5px;color:var(--muted)}
-@media (prefers-reduced-motion: no-preference){.screen.enter{animation:in .22s ease-out}@keyframes in{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}}
-.kind{flex:none;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:2px 8px;background:var(--sunk);color:var(--muted);margin-top:2px}
-.k-Vrat{background:#FCE7D6;color:#8A3605} .k-Pooja{background:#F6E2E0;color:#7A1F1A} .k-Daan{background:var(--okbg);color:var(--ok)} .k-Jap{background:#F3EAD2;color:#6E5212}
-.day-head{margin-top:10px;font-size:13px;font-weight:700;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px}
+.tabs button[aria-current="page"]{color:var(--accent);font-weight:800}
+.tabs button[aria-current="page"] span.ti{background:var(--peach-soft)}
+
+/* ----- feature pieces ----- */
+.mantra{width:min(250px,68vw);aspect-ratio:1;max-width:100%;border-radius:50%;border:none;background:radial-gradient(circle at 35% 30%,#FBE6D8,#F1CDB7 70%);box-shadow:0 0 0 10px #FFF, 0 0 0 12px var(--gold), var(--shadow-lg);color:var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;align-self:center;margin:12px 0}
+.mantra .n{font-family:var(--display);font-size:72px;font-weight:600;line-height:1}
+.mantra span:last-child{color:var(--muted);font-weight:600}
+.video{height:150px;border-radius:var(--r-sm);background:var(--hero-grad);color:var(--muted);display:grid;place-items:center;font-size:13.5px;font-weight:600;border:1px dashed var(--peach)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:14.5px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:700;min-width:0;overflow-wrap:anywhere}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));background:var(--fg);color:#FFF8F1;padding:11px 18px;border-radius:14px;font-size:14px;font-weight:600;z-index:9;max-width:90vw;box-shadow:var(--shadow-lg)}
+.demo{font-size:13px;background:var(--warnbg);color:var(--warn);border-radius:14px;padding:8px 8px 8px 14px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-weight:600}
+.demo button{min-height:34px;font-size:13px;padding:0 12px;box-shadow:none}
+.notice{background:var(--sunk);border-radius:var(--r-sm);padding:12px 14px;font-size:13.5px;color:var(--muted)}
+@media (prefers-reduced-motion: no-preference){.screen.enter{animation:in .24s ease-out}@keyframes in{from{opacity:.5;transform:translateY(8px)}to{opacity:1;transform:none}}}
+
+/* jyotish wheel */
 .wheel-wrap{max-width:320px;width:100%;align-self:center}
 .wheel{width:100%;height:auto;display:block}
 .w-ring{fill:none;stroke:var(--line);stroke-width:1.2} .w-line{stroke:var(--line);stroke-width:1}
-.w-you{fill:color-mix(in srgb, var(--gold) 22%, transparent);stroke:var(--gold);stroke-width:1.5}
-.w-sign{font:600 10.5px var(--body);fill:var(--muted);text-anchor:middle}
-.w-pl{fill:var(--surface);stroke:var(--accent);stroke-width:1.4} .w-pl.Sa,.w-pl.Ra,.w-pl.Ke{stroke:var(--maroon)} .w-pl.Ju,.w-pl.Ve{stroke:var(--ok)}
-.w-pt{font:700 9.5px var(--body);fill:var(--fg);text-anchor:middle}
-.w-c{font:400 14px var(--display);fill:var(--accent);text-anchor:middle} .w-c2{font:500 10px var(--body);fill:var(--muted);text-anchor:middle}
-.planet{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)} .planet:last-child{border-bottom:none}
-.w-dot{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--accent);display:grid;place-items:center;font-size:11px;font-weight:700;flex:none}
-.dosha{display:flex;flex-direction:column;gap:4px;padding:10px 0;border-bottom:1px solid var(--line)}
+.w-you{fill:color-mix(in srgb, var(--peach) 45%, transparent);stroke:var(--terracotta);stroke-width:1.5}
+.w-sign{font:700 10px var(--body);fill:var(--muted);text-anchor:middle}
+.w-pl{fill:var(--surface);stroke:var(--terracotta);stroke-width:1.4} .w-pl.Sa,.w-pl.Ra,.w-pl.Ke{stroke:#7A6A5E} .w-pl.Ju,.w-pl.Ve{stroke:var(--ok)}
+.w-pt{font:800 9px var(--body);fill:var(--fg);text-anchor:middle}
+.w-c{font:600 14px var(--display);fill:var(--accent);text-anchor:middle} .w-c2{font:600 10px var(--body);fill:var(--muted);text-anchor:middle}
+.planet{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)} .planet:last-child{border-bottom:none}
+.w-dot{width:32px;height:32px;border-radius:50%;background:var(--peach-soft);color:var(--accent);display:grid;place-items:center;font-size:11px;font-weight:800;flex:none}
+.dosha{display:flex;flex-direction:column;gap:4px;padding:12px 0;border-bottom:1px solid var(--line)} .dosha:last-of-type{border-bottom:none}
+.list-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)} .list-row:last-child{border-bottom:none}
 </style>
 </head>
 <body>
@@ -154,7 +218,7 @@ textarea{min-height:76px;resize:vertical}
 <svg class="mandala" viewBox="0 0 400 400" aria-hidden="true"><use href="#mandalaArt"/></svg>
 <svg class="mandala tl" viewBox="0 0 400 400" aria-hidden="true"><use href="#mandalaArt"/></svg>
 <div class="shell">
- <header class="appbar"><span class="brand"><i aria-hidden="true">कृ</i>Krupamarg</span><button class="music" id="musicBtn" data-act="music" aria-pressed="false">♪ Temple music</button></header>
+ <header class="appbar"><span class="brand"><i aria-hidden="true">कृ</i>krupamarg</span><button class="music" id="musicBtn" data-act="music" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span>Temple music</span></button></header>
  <main class="app" id="app" aria-live="polite"></main>
  <nav class="tabs" id="tabs" hidden aria-label="Main"><div class="in" id="tabsIn"></div></nav>
 </div>
@@ -291,7 +355,7 @@ function vWelcome(){return `
 <section class="screen stack" style="padding-top:8px">
  <div class="ganesh-hero">
   <svg class="ganesh" viewBox="0 0 200 230" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Line drawing of Lord Ganesha"><use href="#ganeshArt"/></svg>
-  <h1 style="color:var(--onmaroon)">Krupamarg</h1><p style="color:var(--gold)">कृपामार्ग · the path of grace</p>
+  <h1>Krupamarg</h1><p class="tag">कृपामार्ग · the path of grace</p>
  </div>
  <p>Register your sankalp, choose sacred sites, and follow a devotional plan of puja, vrat, jap and daan until your deadline, with live panchang and planet positions.</p>
  <div class="card">
@@ -385,30 +449,38 @@ function vPaid(){return `<section class="screen stack" style="padding-top:20px;t
  <button class="btn-primary btn-block" data-go="home">Go to my homepage</button></section>`}
 
 /* ---------- home tabs ---------- */
+const HERO_ART=`<svg class="art" viewBox="0 0 300 170" aria-hidden="true">
+ <defs><radialGradient id="sunG" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFF4E2"/><stop offset=".6" stop-color="#F7D9A8" stop-opacity=".9"/><stop offset="1" stop-color="#F7D9A8" stop-opacity="0"/></radialGradient></defs>
+ <circle cx="205" cy="78" r="46" fill="url(#sunG)"/><circle cx="205" cy="78" r="17" fill="#FCE6C3"/>
+ <path d="M0 132 C40 104 70 112 104 98 C138 84 160 104 196 92 C228 81 258 94 300 82 V170 H0Z" fill="#EFC6AE" opacity=".55"/>
+ <path d="M40 150 C80 128 120 136 160 124 C196 114 236 126 300 112 V170 H40Z" fill="#E7B597" opacity=".6"/>
+ <g fill="#C98A6A" opacity=".85"><path d="M236 150 V122 h-6 l12-12 l12 12 h-6 v28z"/><path d="M247 108 c0-14 8-26 8-40 c0 14 8 26 8 40z"/><rect x="243" y="106" width="24" height="6" rx="1"/><path d="M228 150 h52 v-26 h-6 v-6 h-40 v6 h-6z"/><path d="M255 68 v-14"/><path d="M255 54 l12 4 l-12 4z" stroke="#C98A6A" stroke-width="1.4"/></g>
+ <path d="M0 170 C60 152 120 160 180 150 C230 142 270 150 300 146 V170Z" fill="#DCA284" opacity=".55"/>
+</svg>`;
 function countdownCard(){const left=daysBetween(today,S.user.deadline),total=Math.max(1,daysBetween(S.startedOn,S.user.deadline)),pct=Math.max(0,Math.min(100,Math.round((total-left)/total*100)));
- return `<div class="hero"><div class="row between"><span class="eyebrow" style="color:var(--gold)">${wishName(S.user.wish)} sankalp · ${wishMr(S.user.wish)}</span><span class="tiny muted">Deadline ${fmt(S.user.deadline)}</span></div>
-  <div class="row" style="align-items:flex-end;gap:12px"><span class="count">${Math.max(0,left)}</span><span style="padding-bottom:6px">days left</span></div>
-  <p class="muted small">${esc(S.user.wishText)}</p>
-  <div class="bar" style="background:color-mix(in srgb, var(--onmaroon) 18%, transparent)"><b style="width:${pct}%;background:var(--gold)"></b></div>
+ return `<div class="hero">${HERO_ART}<div class="row between"><span class="eyebrow">${wishName(S.user.wish)} sankalp · <span class="dev">${wishMr(S.user.wish)}</span></span><span class="tiny muted">Deadline ${fmt(S.user.deadline)}</span></div>
+  <div class="row" style="align-items:flex-end;gap:10px;margin-top:4px"><span class="count">${Math.max(0,left)}</span><span style="padding-bottom:8px;font-weight:700;font-size:17px">days left</span></div>
+  <p class="small muted" style="max-width:70%">${esc(S.user.wishText)}</p>
+  <div class="bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="Sankalp progress" style="margin-top:6px"><b style="width:${pct}%"></b></div>
   <p class="tiny muted">${pct}% of your sankalp period complete</p></div>`}
 function todoList(items,showDate=true){return items.map(t=>`<label class="todo" for="t_${t.id}"><input type="checkbox" id="t_${t.id}" data-todo="${t.id}" ${S.done[t.id]?'checked':''}>
  <span style="min-width:0;flex:1"><span class="${S.done[t.id]?'done-text':''}">${esc(t.text)}</span>${showDate?`<div class="when">${t.date===iso(today)?'Today':fmt(t.date)}</div>`:''}</span><span class="kind k-${t.kind}">${t.kind}</span></label>`).join('')}
 function tHome(){const p=plan(),t=iso(today),todays=p.filter(x=>x.date===t),next=p.filter(x=>x.date>t&&(x.kind==='Pooja'||x.kind==='Vrat')).slice(0,3),doneN=todays.filter(x=>S.done[x.id]).length,pc=panchang(today);
  return `<section class="screen stack">
- <div class="row between"><div><p class="eyebrow">नमस्कार</p><h1>${esc(S.user.name.split(' ')[0])}</h1></div><div class="mark" style="width:44px;height:44px;font-size:22px">कृ</div></div>
+ <div class="row between"><div><p class="eyebrow dev" style="letter-spacing:0;text-transform:none;font-size:14px">नमस्कार</p><h1 style="font-size:30px">${esc(S.user.name.split(' ')[0])}</h1></div><div class="mark" style="width:48px;height:48px;font-size:22px" aria-hidden="true">कृ</div></div>
  ${countdownCard()}
- <button class="card" data-tab="jyotish" style="text-align:left;font-weight:400">
-  <span class="row between" style="width:100%"><span class="eyebrow">Today's panchang · ${pc.vara}</span><span class="small" style="color:var(--accent);font-weight:600">Open →</span></span>
-  <span class="grid2" style="width:100%;font-size:14.5px"><span><span class="muted tiny">Tithi</span><br><strong>${pc.tithi}</strong></span><span><span class="muted tiny">Nakshatra</span><br><strong>${pc.nak}</strong></span><span><span class="muted tiny">Sunrise</span><br><strong>${pc.rise}</strong></span><span><span class="muted tiny">Rahu kaal</span><br><strong>${pc.rahu}</strong></span></span>
+ <button class="card" data-tab="jyotish" aria-label="Open today's panchang">
+  <span class="row between" style="width:100%"><span class="eyebrow" style="color:var(--fg)">Today's panchang · ${pc.vara}</span><span class="small" style="color:var(--accent);font-weight:700">Open →</span></span>
+  <span class="pgrid"><span><span class="k">Tithi</span><strong>${pc.tithi}</strong></span><span><span class="k">Nakshatra</span><strong>${pc.nak}</strong></span><span><span class="k">Sunrise</span><strong>${pc.rise}</strong></span><span><span class="k">Rahu kaal</span><strong>${pc.rahu}</strong></span></span>
  </button>
- <div class="card"><div class="row between"><h3>Today's devotion</h3><span class="pill ${doneN===todays.length?'ok':''}">${doneN} of ${todays.length} done</span></div>${todoList(todays,false)}</div>
+ <div class="card"><div class="card-head"><span class="ico">${ic('lotus')}</span><h3>Today's devotion</h3><span class="pill ${doneN===todays.length&&todays.length?'ok':''}">${doneN} of ${todays.length} done</span></div>${todoList(todays,false)}</div>
  <div class="grid2">
-  <button class="card" style="align-items:flex-start;font-weight:400" data-go="mantra"><strong style="color:var(--accent);font-size:22px">${S.mantra%108}/108</strong><span class="small">Mantra counter · ${Math.floor(S.mantra/108)} malas today</span></button>
-  <button class="card" style="align-items:flex-start;font-weight:400" data-go="proofs"><strong style="color:var(--accent);font-size:17px">Temple proofs</strong><span class="small">Opening soon</span></button>
-  <button class="card" style="align-items:flex-start;font-weight:400" data-go="vrat"><strong style="color:var(--accent);font-size:17px">Vrat finder</strong><span class="small">Free · for any wish</span></button>
-  <button class="card" style="align-items:flex-start;font-weight:400" data-go="offer"><strong style="color:var(--accent);font-size:17px">Seva and daan</strong><span class="small">Bookings opening soon</span></button>
+  <button class="card tile" data-go="mantra"><span class="ico">${ic('mala')}</span><span><span class="big">${S.mantra%108}<span style="font-size:15px;color:var(--muted)">/108</span></span><br><span class="small muted">Mantra counter · ${Math.floor(S.mantra/108)} malas today</span></span></button>
+  <button class="card tile" data-go="proofs"><span class="ico">${ic('video')}</span><span><strong>Temple proofs</strong><br><span class="small muted">Opening soon</span></span></button>
+  <button class="card tile" data-go="vrat"><span class="ico">${ic('moon')}</span><span><strong>Vrat finder</strong><br><span class="small muted">Free · for any wish</span></span></button>
+  <button class="card tile" data-go="offer"><span class="ico">${ic('hand')}</span><span><strong>Seva and daan</strong><br><span class="small muted">Bookings opening soon</span></span></button>
  </div>
- <div class="card"><h3>Coming up</h3>${next.map(x=>`<div class="row between" style="flex-wrap:nowrap"><span class="small" style="min-width:0">${esc(x.text)}</span><span class="pill">${fmt(x.date)}</span></div>`).join('')||'<p class="small muted">Nothing scheduled yet.</p>'}</div>
+ <div class="card"><div class="card-head"><span class="ico">${ic('calendar')}</span><h3>Coming up</h3></div><div>${next.map(x=>`<div class="list-row"><span class="small" style="min-width:0">${esc(x.text)}</span><span class="pill">${fmt(x.date)}</span></div>`).join('')||'<p class="small muted">Nothing scheduled yet.</p>'}</div></div>
  </section>`}
 function tSankalp(){const p=plan(),t=iso(today),up=p.filter(x=>x.date>=t),days=[...new Set(up.map(x=>x.date))].slice(0,7),left=daysBetween(today,S.user.deadline),
   doneCount=p.filter(x=>x.date<t||S.done[x.id]).length,vr=p.filter(x=>x.kind==='Vrat'&&x.date>=t).slice(0,4);
@@ -499,9 +571,20 @@ function vOutcome(){return `<section class="screen stack"><button class="btn-gho
  ${S.outcome==='notyet'?`<div class="card"><h3>Keep going</h3><p class="small muted">Many wishes take more time. Start a new sankalp with a fresh deadline.</p><button class="btn-primary" data-act="newSankalp">Start a new sankalp</button></div>`:''}</section>`}
 
 /* ---------- render ---------- */
+const IC={
+ music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+ lotus:'<path d="M12 20c-4.5 0-8-2.5-9-6 3 0 5.5 1 7 3"/><path d="M12 20c4.5 0 8-2.5 9-6-3 0-5.5 1-7 3"/><path d="M12 20c-2.6-1.8-4-4.4-4-7.3C8 9.7 9.6 7 12 5c2.4 2 4 4.7 4 7.7 0 2.9-1.4 5.5-4 7.3z"/>',
+ sunrise:'<path d="M12 2v6"/><path d="m4.9 10.9 1.4 1.4"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.1 10.9-1.4 1.4"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/>',
+ mala:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="4" r="1.6"/><circle cx="12" cy="20" r="1.6"/><circle cx="4" cy="12" r="1.6"/><circle cx="20" cy="12" r="1.6"/><path d="M12 20v2.5"/>',
+ video:'<path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/>',
+ moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>',
+ hand:'<path d="M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16"/><path d="m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.8-2.8l-4.2 3.9"/><path d="m2 15 6 6"/><path d="M19.5 8.5c.7-.7 1.5-1.6 1.5-2.7A2.7 2.7 0 0 0 16 4a2.8 2.8 0 0 0-5 1.8c0 1.2.8 2 1.5 2.8L16 12z"/>',
+ calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+ sparkle:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>'};
+const ic=(k,cls='')=>`<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
 const ICON={home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',sankalp:'<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',jyotish:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',priests:'<path d="M12 2v3M8 9l4-4 4 4M6 21V11h12v10M3 21h18M10 21v-5h4v5"/>',profile:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/>'};
 function renderTabs(){const t=$('#tabs'),inApp=S.screen==='app';t.hidden=!inApp;if(!inApp)return;
- $('#tabsIn').innerHTML=[['home','Home'],['sankalp','Sankalp'],['jyotish','Jyotish'],['priests','Temples'],['profile','Profile']].map(([k,l])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k]}</svg>${l}</button>`).join('')}
+ $('#tabsIn').innerHTML=[['home','Home'],['sankalp','Sankalp'],['jyotish','Jyotish'],['priests','Temples'],['profile','Profile']].map(([k,l])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':''}><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k]}</svg></span>${l}</button>`).join('')}
 function render(){const v={welcome:vWelcome,register:vRegister,sites:vSites,review:vReview,paid:vPaid,mantra:vMantra,proofs:vProofs,vrat:vVrat,offer:vOffer,outcome:vOutcome,
   app:()=>({home:tHome,sankalp:tSankalp,jyotish:tJyotish,priests:tPriests,profile:tProfile}[S.tab])()}[S.screen];
  const el=$('#app'),key=S.screen+(S.screen==='app'?':'+S.tab:'')+(S.screen==='register'?':'+S.regStep:''),same=key===lastView,top=el.scrollTop;
@@ -526,7 +609,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
  if(d.vrat){S.vratWish=d.vrat;render();return}
  if(d.outcome){S.outcome=d.outcome;render();return}
  const a=d.act;if(!a)return;
- if(a==='music'){musicOn=!musicOn;b.setAttribute('aria-pressed',musicOn);b.textContent=musicOn?'♪ Music on':'♪ Temple music';musicOn?startMusic():stopMusic();return}
+ if(a==='music'){musicOn=!musicOn;b.setAttribute('aria-pressed',musicOn);b.querySelector('span').textContent=musicOn?'Music on':'Temple music';musicOn?startMusic():stopMusic();return}
  if(a==='regBack'){if(S.regStep===0)S.screen=S.paid?'app':'welcome';else{readReg();S.regStep--}render()}
  if(a==='addFam'){const n=document.getElementById('famName').value.trim();if(!n){toast('Type a name first.');return}S.user.family.push({name:n,rel:document.getElementById('famRel').value});render()}
  if(a==='pay'){S.paid=true;S.startedOn=iso(today);S.done={};S.outcome=null;planCache=null;go('paid')}

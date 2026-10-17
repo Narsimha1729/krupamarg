@@ -6,8 +6,8 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FCF9F4",
-  "theme_color": "#5A1712",
+  "background_color": "#FFF8F1",
+  "theme_color": "#FFF8F1",
   "lang": "en-IN",
   "categories": ["lifestyle", "religion"],
   "icons": [
