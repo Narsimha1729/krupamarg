@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Icchamarg · इच्छामार्ग</title>
+<meta name="description" content="Register your sankalp, follow a daily puja, vrat and daan plan until your deadline, with live panchang and planet positions.">
+<meta name="theme-color" content="#5A1712">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Icchamarg">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&family=Rozha+One&display=swap">
+<style>
+/* Layout: one phone-width app column, centred on wide screens; screens swap inside it, bottom tab bar after registration. */
+:root{
+  --bg:#F6EFE6; --surface:#FFFFFF; --sunk:#EFE4D6; --line:#E3D3C0;
+  --fg:#2A1711; --muted:#6E5242; --maroon:#5A1712; --onmaroon:#FFF4E6; --gold:#E9A33A;
+  --accent:#A3410A; --onaccent:#FFFFFF; --ok:#2B6A63; --okbg:#E1EFEC; --warn:#8A3A06; --warnbg:#FCEBDD;
+  --display:'Rozha One', 'Tiro Devanagari Hindi', Georgia, serif;
+  --body:'Mukta', 'Noto Sans Devanagari', system-ui, sans-serif;
+  --r:14px; color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45;
+  padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));min-height:100vh}
+:root{--page:#FCF9F4; --mandala:#C9962E}
+.mandala{position:fixed;right:-140px;bottom:-140px;width:460px;max-width:none;height:460px;color:var(--mandala);opacity:.16;z-index:0;pointer-events:none}
+.mandala.tl{right:auto;bottom:auto;left:-170px;top:-170px;width:380px;height:380px;opacity:.1}
+.app{position:relative;z-index:2;max-width:440px;margin:56px auto 110px;padding:16px 16px 24px;display:flex;flex-direction:column;gap:14px;
+  background:var(--bg);border-radius:26px;border:1px solid var(--line);box-shadow:0 10px 36px rgba(90,23,18,.08)}
+.music{position:fixed;z-index:8;top:calc(12px + env(safe-area-inset-top,0px));right:max(12px, calc(env(safe-area-inset-right,0px) + 12px));
+  min-height:40px;border-radius:999px;background:var(--surface);color:var(--accent);border:1px solid var(--line);padding:0 14px;font-size:14px;box-shadow:0 4px 14px rgba(90,23,18,.08)}
+.music[aria-pressed="true"]{background:var(--accent);color:var(--onaccent);border-color:var(--accent)}
+.ganesh{width:150px;height:auto;color:var(--gold);align-self:center}
+.ganesh-hero{background:var(--maroon);border-radius:20px;padding:18px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--onmaroon);text-align:center}
+.proto{font-size:12.5px;color:var(--muted);text-align:center;background:var(--sunk);border-radius:999px;padding:4px 12px}
+h1,h2,h3{margin:0;text-wrap:balance}
+h1{font-family:var(--display);font-weight:400;font-size:30px;line-height:1.12}
+h2{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.2}
+h3{font-size:17px;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)} .small{font-size:13.5px} .tiny{font-size:12.5px}
+.eyebrow{font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.hero{background:var(--maroon);color:var(--onmaroon);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.hero .muted{color:color-mix(in srgb, var(--onmaroon) 78%, transparent)}
+.mark{width:56px;height:56px;border-radius:50%;background:var(--maroon);color:var(--gold);display:grid;place-items:center;font-family:var(--display);font-size:30px;flex:none}
+button,.btn{font:inherit;cursor:pointer;border-radius:12px;min-height:48px;padding:0 16px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font-weight:600}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.btn-ghost{background:transparent;border:none;color:var(--accent);min-height:36px;padding:0;font-weight:600;align-self:flex-start}
+.btn-block{width:100%}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button[disabled]{opacity:.45;cursor:not-allowed}
+label.field{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:600}
+label.field span.opt{font-weight:400;color:var(--muted)}
+input,select,textarea{font:inherit;font-weight:400;min-height:46px;border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--surface);color:var(--fg);width:100%}
+textarea{min-height:76px;resize:vertical}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.check input{width:22px;height:22px;min-height:0;flex:none;margin-top:1px;accent-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:38px;border-radius:999px;padding:0 14px;font-weight:500;font-size:15px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:2px 10px;font-size:12.5px;font-weight:600;background:var(--sunk);color:var(--muted)}
+.pill.ok{background:var(--okbg);color:var(--ok)} .pill.warn{background:var(--warnbg);color:var(--warn)}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.steps i{height:6px;border-radius:9px;background:var(--line);display:block}
+.steps i.on{background:var(--accent)}
+.select-card{text-align:left;display:flex;gap:12px;align-items:flex-start;padding:14px;min-height:0;font-weight:400}
+.select-card[aria-pressed="true"]{border:2.5px solid var(--accent);background:color-mix(in srgb, var(--accent) 8%, var(--surface))}
+.tick{width:24px;height:24px;border-radius:7px;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:14px;color:var(--onaccent)}
+[aria-pressed="true"] .tick{background:var(--accent);border-color:var(--accent)}
+.avatar{width:46px;height:46px;border-radius:50%;background:var(--sunk);display:grid;place-items:center;font-weight:700;color:var(--accent);flex:none}
+.bar{height:8px;border-radius:9px;background:var(--sunk);overflow:hidden}
+.bar b{display:block;height:100%;background:var(--accent);border-radius:9px}
+.count{font-family:var(--display);font-size:52px;line-height:1;color:var(--gold)}
+.todo{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.todo:last-child{border-bottom:none}
+.todo input{width:22px;height:22px;min-height:0;flex:none;margin-top:2px;accent-color:var(--ok)}
+.todo .when{font-size:12.5px;color:var(--muted)}
+.done-text{text-decoration:line-through;color:var(--muted)}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);
+  padding:6px max(8px, env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(8px, env(safe-area-inset-left,0px));z-index:5}
+.tabs .in{max-width:440px;margin:0 auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.tabs button{border:none;background:transparent;min-height:50px;padding:0;font-size:13px;font-weight:500;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.tabs button[aria-current="page"]{color:var(--accent);font-weight:700}
+.tabs svg{width:22px;height:22px}
+.mantra{width:min(260px,70vw);aspect-ratio:1;max-width:100%;border-radius:50%;border:10px solid var(--gold);background:var(--accent);color:var(--onaccent);display:flex;flex-direction:column;align-items:center;justify-content:center;align-self:center}
+.mantra .n{font-size:68px;font-weight:700;line-height:1}
+.video{height:150px;border-radius:12px;background:var(--maroon);color:var(--onmaroon);display:grid;place-items:center;font-size:13px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14.5px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:600;min-width:0;overflow-wrap:anywhere}
+.otp{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.otp input{text-align:center;font-size:22px;font-weight:700;padding:0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:9;max-width:90vw}
+.demo{font-size:13px;background:var(--warnbg);color:var(--warn);border-radius:12px;padding:8px 12px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.demo button{min-height:34px;font-size:13px;padding:0 10px}
+.notice{background:var(--sunk);border-radius:12px;padding:10px 12px;font-size:13.5px;color:var(--muted)}
+@media (prefers-reduced-motion: no-preference){.screen{animation:in .22s ease-out}@keyframes in{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}}
+.kind{flex:none;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:2px 8px;background:var(--sunk);color:var(--muted);margin-top:2px}
+.k-Vrat{background:#FCE7D6;color:#8A3605} .k-Pooja{background:#F6E2E0;color:#7A1F1A} .k-Daan{background:var(--okbg);color:var(--ok)} .k-Jap{background:#F3EAD2;color:#6E5212}
+.day-head{margin-top:10px;font-size:13px;font-weight:700;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px}
+.wheel-wrap{max-width:320px;width:100%;align-self:center}
+.wheel{width:100%;height:auto;display:block}
+.w-ring{fill:none;stroke:var(--line);stroke-width:1.2} .w-line{stroke:var(--line);stroke-width:1}
+.w-you{fill:color-mix(in srgb, var(--gold) 22%, transparent);stroke:var(--gold);stroke-width:1.5}
+.w-sign{font:600 10.5px var(--body);fill:var(--muted);text-anchor:middle}
+.w-pl{fill:var(--surface);stroke:var(--accent);stroke-width:1.4} .w-pl.Sa,.w-pl.Ra,.w-pl.Ke{stroke:var(--maroon)} .w-pl.Ju,.w-pl.Ve{stroke:var(--ok)}
+.w-pt{font:700 9.5px var(--body);fill:var(--fg);text-anchor:middle}
+.w-c{font:400 14px var(--display);fill:var(--accent);text-anchor:middle} .w-c2{font:500 10px var(--body);fill:var(--muted);text-anchor:middle}
+.planet{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)} .planet:last-child{border-bottom:none}
+.w-dot{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--accent);display:grid;place-items:center;font-size:11px;font-weight:700;flex:none}
+.dosha{display:flex;flex-direction:column;gap:4px;padding:10px 0;border-bottom:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+ <g id="ganeshArt">
+  <circle cx="100" cy="10" r="5"/><path d="M72 60 L82 32 L100 16 L118 32 L128 60"/><path d="M68 62 Q100 50 132 62"/><path d="M86 44 Q100 38 114 44"/>
+  <path d="M70 68 C42 56 30 98 46 118 C54 128 68 124 72 110"/><path d="M130 68 C158 56 170 98 154 118 C146 128 132 124 128 110"/>
+  <path d="M72 64 Q70 96 80 112 M128 64 Q130 96 120 112"/>
+  <path d="M84 90 Q88 85 92 90 M108 90 Q112 85 116 90"/><path d="M100 70 V80"/><circle cx="100" cy="84" r="1.6"/>
+  <path d="M106 104 C112 130 94 148 102 162 C108 172 124 168 120 156"/><path d="M94 104 C92 120 92 132 96 146"/><path d="M90 114 L82 126"/>
+  <path d="M80 112 Q100 122 120 112"/>
+  <ellipse cx="100" cy="190" rx="40" ry="30"/><path d="M84 190 Q100 202 116 190"/>
+  <path d="M62 168 Q52 182 60 196"/><circle cx="54" cy="200" r="9"/><path d="M48 196 Q54 186 60 196"/>
+  <path d="M138 168 Q152 160 150 142"/><path d="M144 140 L150 130 L156 140"/>
+  <ellipse cx="160" cy="214" rx="12" ry="7"/><circle cx="168" cy="208" r="3"/><path d="M148 214 Q140 216 136 210"/>
+ </g></defs></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><g id="mandalaArt" fill="none" stroke="currentColor" stroke-width="1.6">
+ <circle cx="200" cy="200" r="190"/><circle cx="200" cy="200" r="150"/><circle cx="200" cy="200" r="60"/><circle cx="200" cy="200" r="24"/>
+ <g id="mpetal"><path d="M200 140 C185 110 185 80 200 50 C215 80 215 110 200 140 Z"/><path d="M200 50 C190 30 200 14 200 10 C200 14 210 30 200 50"/><circle cx="200" cy="168" r="4"/></g>
+ <use href="#mpetal" transform="rotate(30 200 200)"/><use href="#mpetal" transform="rotate(60 200 200)"/><use href="#mpetal" transform="rotate(90 200 200)"/><use href="#mpetal" transform="rotate(120 200 200)"/><use href="#mpetal" transform="rotate(150 200 200)"/><use href="#mpetal" transform="rotate(180 200 200)"/><use href="#mpetal" transform="rotate(210 200 200)"/><use href="#mpetal" transform="rotate(240 200 200)"/><use href="#mpetal" transform="rotate(270 200 200)"/><use href="#mpetal" transform="rotate(300 200 200)"/><use href="#mpetal" transform="rotate(330 200 200)"/>
+</g></defs></svg>
+<svg class="mandala" viewBox="0 0 400 400" aria-hidden="true"><use href="#mandalaArt"/></svg>
+<svg class="mandala tl" viewBox="0 0 400 400" aria-hidden="true"><use href="#mandalaArt"/></svg>
+<button class="music" id="musicBtn" data-act="music" aria-pressed="false">♪ Temple music</button>
+<div class="app" id="app" aria-live="polite"></div>
+<nav class="tabs" id="tabs" hidden aria-label="Main"><div class="in" id="tabsIn"></div></nav>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const WISHES=[['exam','Exam','परीक्षा'],['job','Job','नोकरी'],['marriage','Marriage','विवाह'],['family','Family','कुटुंब'],['health','Health','आरोग्य'],['business','Business','व्यवसाय'],['home','New home','नवीन घर'],['travel','Travel','प्रवास']];
+const WISH_DAILY={exam:'Saraswati vandana before study',job:'Hanuman Chalisa',marriage:'Gauri–Shankar prayer',family:'Evening aarti with the family',health:'Mahamrityunjaya jap × 11, alongside your doctor’s treatment',business:'Lakshmi aarti at opening time',home:'Ganesh vandana',travel:'Hanuman Chalisa'};
+const WEEK=['Surya arghya at sunrise','Shiva abhishek with milk and bel patra','Hanuman puja · sindoor and Chalisa','Ganesh archana with durva','Guru puja · donate chana dal or yellow cloth','Devi puja · offer white sweets','Til-oil diya for Shani · Hanuman Chalisa'];
+const DAAN=['Annadan · feed people in need','Vastra daan · donate clothes','Dhan daan · dakshina to the temple or the needy','Gau seva · feed a cow'];
+const VRAT={exam:'Ganesh vandana before study each day; many students keep the Sankashti Chaturthi vrat.',job:'Somvar vrat (Monday Shiva puja) and daily Hanuman Chalisa.',marriage:'The 16 Mondays vrat (Solah Somvar).',family:'Satyanarayan katha on Purnima with the whole family.',health:'Mahamrityunjaya mantra × 108 daily, alongside your doctor’s treatment.',business:'Lakshmi–Ganesh puja on Fridays.',home:'Vastu puja and griha pravesh on an auspicious muhurat.',travel:'Hanuman Chalisa before setting out.'};
+const SITES=[
+ {id:'grish',name:'Grishneshwar Jyotirlinga',place:'Verul, Chh. Sambhajinagar',deity:'Shiva',type:'Jyotirlinga',mantra:'ॐ नमः शिवाय',services:'Rudrabhishek · Laghurudra · Daily sankalp',good:['job','marriage','health','family'],aarti:'4:00 AM · 8:00 PM'},
+ {id:'trimb',name:'Trimbakeshwar Jyotirlinga',place:'Trimbak, Nashik',deity:'Shiva',type:'Jyotirlinga',mantra:'ॐ नमः शिवाय',services:'Rudrabhishek · Mahamrityunjaya jap',good:['health','family','job'],aarti:'5:30 AM · 7:00 PM'},
+ {id:'siddhi',name:'Siddhivinayak Temple',place:'Prabhadevi, Mumbai',deity:'Ganesh',type:'Ganesh mandir',mantra:'ॐ गं गणपतये नमः',services:'Archana · Modak naivedya · Sankashti puja',good:['exam','business','home'],aarti:'5:30 AM · 8:30 PM'},
+ {id:'somnath',name:'Somnath Jyotirlinga',place:'Prabhas Patan, Gujarat',deity:'Shiva',type:'Jyotirlinga',mantra:'ॐ नमः शिवाय',services:'Rudrabhishek · Bilva puja',good:['job','business','travel'],aarti:'7:00 AM · 7:00 PM'},
+ {id:'ambaji',name:'Ambaji Shaktipeeth',place:'Banaskantha, Gujarat',deity:'Devi',type:'Shaktipeeth',mantra:'ॐ ऐं ह्रीं क्लीं चामुण्डायै विच्चे',services:'Chunari offering · Navratri sankalp',good:['marriage','family','home'],aarti:'7:30 AM · 6:30 PM'},
+ {id:'tulja',name:'Tuljabhavani Temple',place:'Tuljapur, Dharashiv',deity:'Devi',type:'Shaktipeeth',mantra:'ॐ तुळजाभवान्यै नमः',services:'Abhishek · Gondhal · Sankalp',good:['family','health','exam'],aarti:'5:00 AM · 9:00 PM'}];
+const CITIES={'Pune':[18.52,73.86],'Mumbai':[19.08,72.88],'Chh. Sambhajinagar':[19.88,75.34],'Nashik':[20.0,73.79],'Nagpur':[21.15,79.09],'Ahmedabad':[23.02,72.57],'Gandhinagar':[23.22,72.65],'Surat':[21.17,72.83],'Delhi':[28.61,77.21],'Bengaluru':[12.97,77.59]};
+
+/* ---------- astronomy (low-precision Keplerian model, Lahiri ayanamsa; accurate to about a degree) ---------- */
+const D2R=Math.PI/180,R2D=180/Math.PI,rev=x=>((x%360)+360)%360,sn=x=>Math.sin(x*D2R),cs=x=>Math.cos(x*D2R);
+const dayNum=dt=>dt.getTime()/86400000+2440587.5-2451543.5;
+const ayan=d=>23.853+(d/365.25)*0.013968;
+function kepler(M,e){let E=M+e*R2D*sn(M)*(1+e*cs(M));for(let i=0;i<6;i++)E=E-(E-e*R2D*sn(E)-M)/(1-e*cs(E));return E}
+const EL={Me:d=>[48.3313+3.24587e-5*d,7.0047+5e-8*d,29.1241+1.01444e-5*d,0.387098,0.205635+5.59e-10*d,168.6562+4.0923344368*d],
+ Ve:d=>[76.6799+2.4659e-5*d,3.3946+2.75e-8*d,54.891+1.38374e-5*d,0.72333,0.006773-1.302e-9*d,48.0052+1.6021302244*d],
+ Ma:d=>[49.5574+2.11081e-5*d,1.8497-1.78e-8*d,286.5016+2.92961e-5*d,1.523688,0.093405+2.516e-9*d,18.6021+0.5240207766*d],
+ Ju:d=>[100.4542+2.76854e-5*d,1.303-1.557e-7*d,273.8777+1.64505e-5*d,5.20256,0.048498+4.469e-9*d,19.895+0.0830853001*d],
+ Sa:d=>[113.6634+2.3898e-5*d,2.4886-1.081e-7*d,339.3939+2.97661e-5*d,9.55475,0.055546-9.499e-9*d,316.967+0.0334442282*d]};
+function sunPos(d){const w=282.9404+4.70935e-5*d,e=0.016709-1.151e-9*d,M=rev(356.047+0.9856002585*d),E=kepler(M,e),xv=cs(E)-e,yv=Math.sqrt(1-e*e)*sn(E);return{lon:rev(Math.atan2(yv,xv)*R2D+w),r:Math.hypot(xv,yv),M,w}}
+function helio(N,i,w,a,e,M){const E=kepler(M,e),xv=a*(cs(E)-e),yv=a*Math.sqrt(1-e*e)*sn(E),v=Math.atan2(yv,xv)*R2D,r=Math.hypot(xv,yv);
+ return[r*(cs(N)*cs(v+w)-sn(N)*sn(v+w)*cs(i)),r*(sn(N)*cs(v+w)+cs(N)*sn(v+w)*cs(i))]}
+function moonPos(d){const N=125.1228-0.0529538083*d,w=318.0634+0.1643573223*d,M=rev(115.3654+13.0649929509*d);const [x,y]=helio(N,5.1454,w,60.2666,0.0549,M);
+ const s=sunPos(d),Ms=s.M,Mm=M,D=(M+w+N)-(Ms+s.w),F=(M+w+N)-N;
+ const lon=Math.atan2(y,x)*R2D-1.274*sn(Mm-2*D)+0.658*sn(2*D)-0.186*sn(Ms)-0.059*sn(2*Mm-2*D)-0.057*sn(Mm-2*D+Ms)+0.053*sn(Mm+2*D)+0.046*sn(2*D-Ms)+0.041*sn(Mm-Ms)-0.035*sn(D)-0.031*sn(Mm+Ms)-0.015*sn(2*F-2*D)+0.011*sn(Mm-4*D);
+ return{lon:rev(lon),node:rev(N)}}
+function planetLon(k,d){const [N,i,w,a,e,M]=EL[k](d);const [xh,yh]=helio(N,i,w,a,e,rev(M));const s=sunPos(d);return rev(Math.atan2(yh+s.r*sn(s.lon),xh+s.r*cs(s.lon))*R2D)}
+function sidereal(dt){const d=dayNum(dt),A=ayan(d),m=moonPos(d),t={Su:sunPos(d).lon,Mo:m.lon,Ma:planetLon('Ma',d),Me:planetLon('Me',d),Ju:planetLon('Ju',d),Ve:planetLon('Ve',d),Sa:planetLon('Sa',d),Ra:m.node,Ke:rev(m.node+180)};
+ const o={};for(const k in t)o[k]=rev(t[k]-A);o._elong=rev(t.Mo-t.Su);return o}
+const RASHI=['Mesha','Vrishabha','Mithuna','Karka','Simha','Kanya','Tula','Vrishchika','Dhanu','Makara','Kumbha','Meena'];
+const RASHI_S=['Mesh','Vrish','Mith','Kark','Simh','Kany','Tula','Vrsc','Dhan','Makr','Kumb','Meen'];
+const NAK=['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+const YOGA=['Vishkambha','Priti','Ayushman','Saubhagya','Shobhana','Atiganda','Sukarma','Dhriti','Shula','Ganda','Vriddhi','Dhruva','Vyaghata','Harshana','Vajra','Siddhi','Vyatipata','Variyana','Parigha','Shiva','Siddha','Sadhya','Shubha','Shukla','Brahma','Indra','Vaidhriti'];
+const TITHI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Saptami','Ashtami','Navami','Dashami','Ekadashi','Dwadashi','Trayodashi','Chaturdashi'];
+const KAR=['Bava','Balava','Kaulava','Taitila','Garaja','Vanija','Vishti'];
+const VARA=['Ravivar','Somvar','Mangalvar','Budhvar','Guruvar','Shukravar','Shanivar'];
+const PL={Su:['Surya','Sun'],Mo:['Chandra','Moon'],Ma:['Mangal','Mars'],Me:['Budh','Mercury'],Ju:['Guru','Jupiter'],Ve:['Shukra','Venus'],Sa:['Shani','Saturn'],Ra:['Rahu','Rahu'],Ke:['Ketu','Ketu']};
+const GOOD={Su:[3,6,10,11],Mo:[1,3,6,7,10,11],Ma:[3,6,11],Me:[2,4,6,8,10,11],Ju:[2,5,7,9,11],Ve:[1,2,3,4,5,8,9,11,12],Sa:[3,6,11],Ra:[3,6,11],Ke:[3,6,11]};
+const CARE={Su:'Surya arghya on Sundays',Mo:'Shiva abhishek with milk on Mondays',Ma:'Hanuman puja on Tuesdays',Me:'Ganesh archana with durva on Wednesdays',Ju:'Guru puja and chana dal daan on Thursdays',Ve:'Devi puja and white sweets on Fridays',Sa:'Hanuman Chalisa and til-oil diya on Saturdays',Ra:'Durga puja; avoid new starts in Rahu kaal',Ke:'Ganesh puja and dog seva'};
+const tithiNum=el=>Math.floor(el/12)+1;
+function tithiName(t){if(t===15)return'Shukla Purnima';if(t===30)return'Krishna Amavasya';return(t<=15?'Shukla ':'Krishna ')+TITHI[(t-1)%15]}
+function karana(el){const k=Math.floor(el/6);if(k===0)return'Kimstughna';if(k>=57)return['Shakuni','Chatushpada','Naga'][k-57];return KAR[(k-1)%7]}
+function sunTimes(day,lat,lon){const start=new Date(day.getFullYear(),0,0),n=Math.round((day-start)/86400000),B=360/365*(n-81);
+ const eot=9.87*sn(2*B)-7.53*cs(B)-1.5*sn(B),dec=23.44*sn(B);const h=Math.acos((sn(-0.833)-sn(lat)*sn(dec))/(cs(lat)*cs(dec)))*R2D;
+ const noon=720+(82.5-lon)*4-eot;return{rise:noon-h*4,set:noon+h*4}}
+const hm=m=>{m=Math.round(m);let h=Math.floor(m/60),mi=m%60,ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+String(mi).padStart(2,'0')+' '+ap};
+const atIST=(day,min)=>new Date(Date.UTC(day.getFullYear(),day.getMonth(),day.getDate())+(min-330)*60000);
+function panchang(day){const [lat,lon]=CITIES[S.user.city]||CITIES['Pune'];const st=sunTimes(day,lat,lon);const p=sidereal(atIST(day,st.rise));
+ const t=tithiNum(p._elong),seg=(st.set-st.rise)/8,rk=[8,2,7,5,6,4,3][day.getDay()]-1;
+ return{t,tithi:tithiName(t),nak:NAK[Math.floor(p.Mo/(360/27))],yoga:YOGA[Math.floor(rev(p.Su+p.Mo)/(360/27))],karana:karana(p._elong),vara:VARA[day.getDay()],
+  rise:hm(st.rise),set:hm(st.set),rahu:hm(st.rise+rk*seg)+' – '+hm(st.rise+(rk+1)*seg),moonRashi:RASHI[Math.floor(p.Mo/30)]}}
+function specialDay(t){return{11:'Ekadashi',26:'Ekadashi',13:'Pradosh',28:'Pradosh',19:'Sankashti Chaturthi',4:'Vinayaki Chaturthi',15:'Purnima',30:'Amavasya'}[t]}
+function natal(){const u=S.user;if(!u.dob||!/^\d{4}-\d{2}-\d{2}$/.test(u.dob))return null;const [y,m,dd]=u.dob.split('-').map(Number);const [hh,mi]=(u.tob||'12:00').split(':').map(Number);
+ const p=sidereal(new Date(Date.UTC(y,m-1,dd,hh,mi)-330*60000));return{p,rashi:Math.floor(p.Mo/30),nak:Math.floor(p.Mo/(360/27))}}
+function houseFrom(fromR,lon){return((Math.floor(lon/30)-fromR+12)%12)+1}
+function doshas(){const n=natal();if(!n)return[];const now=sidereal(new Date());const out=[];
+ const sh=houseFrom(n.rashi,now.Sa);
+ if([12,1,2].includes(sh))out.push({k:'Sade Sati',on:true,txt:'Shani is in the '+({12:'12th',1:'1st',2:'2nd'}[sh])+' house from your Moon sign ('+({12:'rising phase',1:'peak phase',2:'setting phase'}[sh])+').',dev:'Hanuman Chalisa and a til-oil diya on Saturdays; Shani mantra × 108.'});
+ else if([4,8].includes(sh))out.push({k:'Shani Dhaiya',on:true,txt:'Shani is in the '+sh+'th house from your Moon sign.',dev:'Hanuman Chalisa on Saturdays; donate black til or mustard oil.'});
+ else out.push({k:'Sade Sati',on:false,txt:'Not running now. Shani is in the '+sh+'th house from your Moon sign.'});
+ const mh=houseFrom(n.rashi,n.p.Ma);
+ out.push([1,2,4,7,8,12].includes(mh)?{k:'Mangal dosha',on:true,txt:'Mangal is in the '+mh+'th house from your Moon sign at birth (checked from Moon only).',dev:'Hanuman puja on Tuesdays; your priest can confirm with a full kundali before marriage matching.'}:{k:'Mangal dosha',on:false,txt:'Not indicated from your Moon sign.'});
+ const ks=['Su','Mo','Ma','Me','Ju','Ve','Sa'].map(k=>rev(n.p[k]-n.p.Ra));const ksOn=ks.every(x=>x<180)||ks.every(x=>x>180);
+ out.push(ksOn?{k:'Kaal Sarp',on:true,txt:'All seven planets sat on one side of the Rahu–Ketu axis at your birth.',dev:'Nag Panchami puja; Rudrabhishek at a Jyotirlinga, which your chosen sites offer.'}:{k:'Kaal Sarp',on:false,txt:'Not present in your birth positions.'});
+ return out}
+
+/* ---------- state ---------- */
+const today=new Date();today.setHours(0,0,0,0);
+const iso=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
+const fromIso=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const fmt=d=>(typeof d==='string'?fromIso(d):d).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const daysBetween=(a,b)=>Math.round((fromIso(typeof b==='string'?b:iso(b))-fromIso(typeof a==='string'?a:iso(a)))/86400000);
+const SAMPLE_USER={name:'Aarav Patil',gender:'Male',dob:'2008-03-14',tob:'06:45',pob:'Chh. Sambhajinagar',city:'Pune',gotra:'Kashyap',nakshatra:'',rashi:'',vedicManual:false,
+  family:[{name:'Sunita Patil',rel:'Mother'},{name:'Rajesh Patil',rel:'Father'}],wish:'exam',wishText:'Do well in my Class 12 board exams',deadline:iso(addDays(today,45)),consent:true};
+const BLANK_USER=()=>({name:'',gender:'Male',dob:'',tob:'',pob:'',city:'Pune',gotra:'',nakshatra:'',rashi:'',vedicManual:false,family:[],wish:'exam',wishText:'',deadline:iso(addDays(today,45)),consent:false});
+const STORE_KEY='icchamarg.v1';
+function freshState(){return{screen:'welcome',tab:'home',regStep:0,user:BLANK_USER(),sites:[],priests:[],paid:false,demo:false,startedOn:iso(today),done:{},
+ mantra:0,mantraDay:iso(today),mantraDays:[],outcome:null,offerings:[],remind:'06:30',lang:'English'}}
+function loadState(){try{const raw=localStorage.getItem(STORE_KEY);if(!raw)return null;const s=JSON.parse(raw);if(!s||!s.user)return null;
+ const st={...freshState(),...s};if(!['welcome','register','sites','priests','review','app'].includes(st.screen))st.screen=st.paid?'app':'welcome';
+ if(st.screen==='app'&&!st.paid)st.screen='welcome';return st}catch(e){return null}}
+function saveState(){if(S.demo)return;try{localStorage.setItem(STORE_KEY,JSON.stringify(S))}catch(e){}}
+let S=loadState()||freshState();
+if(S.mantraDay!==iso(today)){S.mantra=0;S.mantraDay=iso(today)}
+function startDemo(){S={...freshState(),demo:true,screen:'app',tab:'home',paid:true,user:JSON.parse(JSON.stringify(SAMPLE_USER)),sites:['grish','siddhi'],priests:[],
+ startedOn:iso(addDays(today,-12)),mantra:72,mantraDays:[...Array(12)].map((_,i)=>iso(addDays(today,-i)))};planCache=null;syncVedic()}
+function leaveDemo(){S=loadState()||freshState();planCache=null;render()}
+function streak(){const set=new Set(S.mantraDays);let n=0,d=new Date(today);if(!set.has(iso(d)))d=addDays(d,-1);while(set.has(iso(d))){n++;d=addDays(d,-1)}return n}
+function syncVedic(){if(S.user.vedicManual)return;const n=natal();if(n){S.user.rashi=RASHI[n.rashi];S.user.nakshatra=NAK[n.nak]}else{S.user.rashi='';S.user.nakshatra=''}}
+syncVedic();
+const $=s=>document.querySelector(s);
+function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2400)}
+const wishName=k=>(WISHES.find(w=>w[0]===k)||[])[1]||'';
+const wishMr=k=>(WISHES.find(w=>w[0]===k)||[])[2]||'';
+const site=id=>SITES.find(s=>s.id===id);
+const born=u=>u.dob?fmt(u.dob)+' '+u.dob.slice(0,4)+' · '+(u.tob||'time not given')+(u.pob?' · '+u.pob:''):'Not given';
+const demoBar=()=>S.demo?'<div class="demo"><span>You are exploring sample data.</span><button type="button" data-act="leaveDemo">Start my own</button></div>':'';
+const initials=n=>n.split(' ').slice(-2).map(x=>x[0]).join('');
+
+/* ---------- devotional plan ---------- */
+let planCache=null;
+function plan(){
+ const key=[S.startedOn,S.user.deadline,S.user.wish,S.user.city,S.sites.join(),S.priests.join()].join('|');
+ if(planCache&&planCache.key===key)return planCache.items;
+ const start=fromIso(S.startedOn),total=Math.max(1,daysBetween(S.startedOn,S.user.deadline)),mantras=S.sites.length?[...new Set(S.sites.map(s=>site(s).mantra))]:['ॐ नमः शिवाय'];
+ const items=[];let week=0;
+ for(let i=0;i<=total;i++){const d=addDays(start,i),ds=iso(d),pc=panchang(d),sp=specialDay(pc.t);
+  items.push({id:'j'+i,date:ds,kind:'Jap',text:mantras[i%mantras.length]+' × 108'});
+  items.push({id:'w'+i,date:ds,kind:'Prayer',text:WISH_DAILY[S.user.wish]});
+  items.push({id:'v'+i,date:ds,kind:'Puja',text:VARA[d.getDay()]+' · '+WEEK[d.getDay()]});
+  if(d.getDay()===0){items.push({id:'d'+i,date:ds,kind:'Daan',text:DAAN[week%DAAN.length]});week++}
+  if(sp){const t={Ekadashi:'Ekadashi vrat · Vishnu sahasranama',Pradosh:'Pradosh · evening Shiva puja','Sankashti Chaturthi':'Sankashti vrat · Ganesh puja, break the fast at moonrise','Vinayaki Chaturthi':'Vinayaki Chaturthi · modak naivedya to Ganesh',Purnima:'Purnima · Satyanarayan katha',Amavasya:'Amavasya · annadan and a diya for ancestors'}[sp];
+   items.push({id:'t'+i,date:ds,kind:'Vrat',text:t})}}
+ items.push({id:'final',date:iso(addDays(fromIso(S.user.deadline),-1)),kind:'Pooja',text:'Completion puja for your sankalp'+(S.sites.length?' · offer thanks to '+site(S.sites[0]).deity:'')});
+ const order={Vrat:0,Pooja:1,Puja:2,Jap:3,Prayer:4,Daan:5};
+ items.sort((a,b)=>a.date.localeCompare(b.date)||order[a.kind]-order[b.kind]);
+ planCache={key,items};return items}
+
+/* ---------- screens: onboarding ---------- */
+function vWelcome(){return `
+<section class="screen stack" style="padding-top:8px">
+ <div class="ganesh-hero">
+  <svg class="ganesh" viewBox="0 0 200 230" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Line drawing of Lord Ganesha"><use href="#ganeshArt"/></svg>
+  <h1 style="color:var(--onmaroon)">Icchamarg</h1><p style="color:var(--gold)">इच्छामार्ग · the path of your wish</p>
+ </div>
+ <p>Register your sankalp, choose sacred sites, and follow a devotional plan of puja, vrat, jap and daan until your deadline, with live panchang and planet positions.</p>
+ <div class="card">
+  <button class="btn-primary btn-block" data-go="register0">Start my sankalp</button>
+  <button class="btn-block" data-act="demo">Explore with sample data</button>
+  <p class="tiny muted">Free. No account needed: your details stay on this device and you can delete them anytime.</p>
+ </div>
+ <div class="row" style="justify-content:center;gap:6px"><span class="pill">मराठी</span><span class="pill">हिंदी</span><span class="pill">ગુજરાતી</span><span class="pill ok">English</span></div>
+ ${installCard()}
+</section>`}
+function installCard(){if(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)return'';
+ const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+ if(deferredInstall)return'<div class="card row between" style="flex-wrap:nowrap"><span class="small">Install Icchamarg on this device for one-tap access.</span><button class="btn-primary" data-act="install">Install</button></div>';
+ if(ios)return'<p class="notice">On iPhone: tap the Share button in Safari, then <strong>Add to Home Screen</strong> to install Icchamarg.</p>';return''}
+const stepBar=n=>`<div class="steps" aria-label="Step ${n+1} of 4">${[0,1,2,3].map(i=>`<i class="${i<=n?'on':''}"></i>`).join('')}</div>`;
+function vRegister(){
+ const u=S.user,st=S.regStep,titles=['About you','Vedic details','Family','Your sankalp'];let body='';
+ if(st===0)body=`
+  <label class="field" for="name">Full name<input id="name" value="${esc(u.name)}" placeholder="Your name" autocomplete="name"></label>
+  <div class="grid2">
+   <label class="field" for="gender">Gender<select id="gender">${['Male','Female','Other'].map(g=>`<option ${u.gender===g?'selected':''}>${g}</option>`).join('')}</select></label>
+   <label class="field" for="city">Current city<select id="city">${Object.keys(CITIES).map(c=>`<option ${u.city===c?'selected':''}>${c}</option>`).join('')}</select></label>
+  </div>
+  <div class="grid2">
+   <label class="field" for="dob">Date of birth <span class="opt">(for rashi)</span><input id="dob" type="date" value="${esc(u.dob)}"></label>
+   <label class="field" for="tob">Time of birth <span class="opt">(if known)</span><input id="tob" type="time" value="${esc(u.tob)}"></label>
+  </div>
+  <label class="field" for="pob">Place of birth <span class="opt">(optional)</span><input id="pob" value="${esc(u.pob)}" placeholder="e.g. Nashik"></label>
+  <p class="notice">Your birth details are used to work out your rashi, nakshatra and planetary positions. Your city sets the panchang timings.</p>`;
+ if(st===1){const n=natal();body=`
+  <div class="card" style="border:2px solid var(--gold)"><p class="eyebrow">Calculated from your birth details</p>
+   <dl class="kv"><dt>Rashi (Moon sign)</dt><dd>${n?RASHI[n.rashi]:'—'}</dd><dt>Nakshatra</dt><dd>${n?NAK[n.nak]:'—'}</dd></dl>
+   <p class="tiny muted">${u.tob?'':'No birth time given, so the nakshatra may be one off. '}Your priest confirms these before the sankalp.</p></div>
+  <label class="field" for="gotra">Gotra<input id="gotra" value="${esc(u.gotra)}" placeholder="e.g. Kashyap, Bharadwaj"></label>
+  <label class="check" for="vedicManual"><input type="checkbox" id="vedicManual" ${u.vedicManual?'checked':''}> My family uses a different rashi or nakshatra</label>
+  <div class="grid2" id="vedicFields" ${u.vedicManual?'':'hidden'}>
+   <label class="field" for="rashi">Rashi<select id="rashi">${RASHI.map(r=>`<option ${u.rashi===r?'selected':''}>${r}</option>`).join('')}</select></label>
+   <label class="field" for="nakshatra">Nakshatra<select id="nakshatra">${NAK.map(r=>`<option ${u.nakshatra===r?'selected':''}>${r}</option>`).join('')}</select></label>
+  </div>`}
+ if(st===2)body=`
+  <p class="muted small">Their names are read in the sankalp with yours.</p>
+  <div class="stack">${u.family.map((f,i)=>`<div class="card row between" style="flex-wrap:nowrap"><div style="min-width:0"><strong>${esc(f.name)}</strong><div class="tiny muted">${esc(f.rel)}</div></div><button type="button" class="btn-ghost" data-rmfam="${i}">Remove</button></div>`).join('')||'<p class="notice">No family members added yet.</p>'}</div>
+  <div class="grid2">
+   <label class="field" for="famName">Name<input id="famName" placeholder="e.g. Riya Patil"></label>
+   <label class="field" for="famRel">Relation<select id="famRel">${['Mother','Father','Spouse','Son','Daughter','Brother','Sister','Grandparent'].map(r=>`<option>${r}</option>`).join('')}</select></label>
+  </div>
+  <button type="button" data-act="addFam">Add family member</button>`;
+ if(st===3)body=`
+  <p style="font-weight:600;font-size:14px">What is your wish about?</p>
+  <div class="chips">${WISHES.map(w=>`<button type="button" class="chip" data-wish="${w[0]}" aria-pressed="${u.wish===w[0]}">${w[1]} · ${w[2]}</button>`).join('')}</div>
+  <label class="field" for="wishText">Your sankalp in your words<textarea id="wishText" placeholder="e.g. Clear my board exams with good marks">${esc(u.wishText)}</textarea></label>
+  <label class="field" for="deadline">Deadline <span class="opt">(exam date, interview, wedding…)</span><input id="deadline" type="date" min="${iso(addDays(today,7))}" value="${esc(u.deadline)}"></label>
+  <p class="notice" id="dlNote">${daysBetween(today,u.deadline)} days to complete your sankalp. Your puja, vrat and daan schedule is planned before this date.</p>
+  ${u.wish==='health'?'<p class="notice">For health wishes, please continue your doctor’s treatment.</p>':''}
+  <label class="check" for="consent"><input type="checkbox" id="consent" ${u.consent?'checked':''}> My details stay on this device. I can delete them anytime from Profile.</label>`;
+ return `${demoBar()}<section class="screen stack">${stepBar(st)}
+  <div><p class="eyebrow">Registration · ${st+1} of 4</p><h1>${titles[st]}</h1></div>
+  <form class="stack" id="regForm">${body}
+   <div class="grid2" style="margin-top:6px"><button type="button" data-act="regBack">${st===0?'Cancel':'Back'}</button><button type="submit" class="btn-primary">${st===3?'Choose sites':'Next'}</button></div>
+  </form></section>`}
+function vSites(){const good=S.user.wish;return `${demoBar()}<section class="screen stack">
+  <button class="btn-ghost" data-go="register3">← Back to sankalp</button>
+  <div><p class="eyebrow">Sankalp setup</p><h1>Choose pilgrimage sites</h1></div>
+  <p class="muted">Pick one or more. Your daily jap follows the sites you choose. Sankalp and pooja bookings at temples open soon.</p>
+  <div class="stack">${SITES.map(s=>`<button class="card select-card" data-site="${s.id}" aria-pressed="${S.sites.includes(s.id)}">
+    <span class="tick">✓</span><span class="stack" style="gap:4px;min-width:0">
+     <strong style="font-size:17px">${s.name}</strong><span class="small muted">${s.place} · ${s.deity}</span><span class="small">${s.services}</span>
+     <span class="row" style="gap:6px">${s.good.includes(good)?`<span class="pill ok">Suited for ${wishName(good)}</span>`:''}<span class="pill">${s.type}</span></span></span></button>`).join('')}</div>
+  <div class="card row between" style="position:sticky;bottom:12px;flex-wrap:nowrap"><span><strong>${S.sites.length}</strong> selected</span><button class="btn-primary" data-go="review" ${S.sites.length?'':'disabled'}>Review</button></div>
+ </section>`}
+function vReview(){const u=S.user;return `${demoBar()}<section class="screen stack">
+  <button class="btn-ghost" data-go="sites">← Back to sites</button>
+  <div><p class="eyebrow">Sankalp setup</p><h1>Review and start</h1></div>
+  <div class="card"><div class="row between"><h3>You</h3><button class="btn-ghost" data-go="register0">Edit</button></div>
+   <dl class="kv"><dt>Name</dt><dd>${esc(u.name)}</dd><dt>Born</dt><dd>${esc(born(u))}</dd><dt>Rashi</dt><dd>${esc(u.rashi)||'—'}</dd><dt>Nakshatra</dt><dd>${esc(u.nakshatra)||'—'}</dd><dt>Gotra</dt><dd>${esc(u.gotra)||'—'}</dd><dt>Family</dt><dd>${u.family.map(f=>esc(f.name)).join(', ')||'None'}</dd></dl></div>
+  <div class="card"><div class="row between"><h3>Sankalp</h3><button class="btn-ghost" data-go="register3">Edit</button></div>
+   <p><strong>${wishName(u.wish)}</strong> · ${esc(u.wishText)}</p><p class="small">Deadline <strong>${fmt(u.deadline)}</strong> · ${daysBetween(today,u.deadline)} days</p></div>
+  <div class="card"><div class="row between"><h3>Sites</h3><button class="btn-ghost" data-go="sites">Edit</button></div>
+   ${S.sites.map(sid=>`<div><strong>${site(sid).name}</strong><div class="small muted">${site(sid).place} · ${site(sid).mantra}</div></div>`).join('')}</div>
+  <div class="card" style="border:2px solid var(--accent)"><div class="row between"><h3>Your plan</h3><strong style="font-size:20px;color:var(--ok)">Free</strong></div>
+   <ul class="small" style="margin:0;padding-left:18px"><li>Daily puja, jap, vrat and daan schedule until your deadline</li><li>Live panchang, planet positions and dosha check</li><li>Mantra counter and progress tracking</li></ul>
+   <p class="tiny muted">Sankalp readings and poojas by temple priests will open soon, paid directly to the temple trust. Nothing is charged in the app today.</p></div>
+  <button class="btn-primary btn-block" data-act="pay">Start my sankalp</button>
+  <p class="tiny muted" style="text-align:center">Prayer and guidance, not guaranteed results.</p>
+ </section>`}
+function vPaid(){return `<section class="screen stack" style="padding-top:20px;text-align:center;align-items:center">
+ <div class="mark" style="width:80px;height:80px;font-size:40px">✓</div><h1>Your sankalp has begun</h1>
+ <p class="muted">${esc(S.user.name.split(' ')[0])}, your ${daysBetween(today,S.user.deadline)}-day plan is ready. Today's puja, jap and prayer are on your homepage.</p>
+ <div class="card" style="text-align:left;width:100%"><dl class="kv"><dt>Sankalp</dt><dd>${wishName(S.user.wish)}</dd><dt>Started</dt><dd>${fmt(S.startedOn)}</dd><dt>Deadline</dt><dd>${fmt(S.user.deadline)}</dd></dl></div>
+ ${installCard()}
+ <button class="btn-primary btn-block" data-go="home">Go to my homepage</button></section>`}
+
+/* ---------- home tabs ---------- */
+function countdownCard(){const left=daysBetween(today,S.user.deadline),total=Math.max(1,daysBetween(S.startedOn,S.user.deadline)),pct=Math.max(0,Math.min(100,Math.round((total-left)/total*100)));
+ return `<div class="hero"><div class="row between"><span class="eyebrow" style="color:var(--gold)">${wishName(S.user.wish)} sankalp · ${wishMr(S.user.wish)}</span><span class="tiny muted">Deadline ${fmt(S.user.deadline)}</span></div>
+  <div class="row" style="align-items:flex-end;gap:12px"><span class="count">${Math.max(0,left)}</span><span style="padding-bottom:6px">days left</span></div>
+  <p class="muted small">${esc(S.user.wishText)}</p>
+  <div class="bar" style="background:color-mix(in srgb, var(--onmaroon) 18%, transparent)"><b style="width:${pct}%;background:var(--gold)"></b></div>
+  <p class="tiny muted">${pct}% of your sankalp period complete</p></div>`}
+function todoList(items,showDate=true){return items.map(t=>`<label class="todo" for="t_${t.id}"><input type="checkbox" id="t_${t.id}" data-todo="${t.id}" ${S.done[t.id]?'checked':''}>
+ <span style="min-width:0;flex:1"><span class="${S.done[t.id]?'done-text':''}">${esc(t.text)}</span>${showDate?`<div class="when">${t.date===iso(today)?'Today':fmt(t.date)}</div>`:''}</span><span class="kind k-${t.kind}">${t.kind}</span></label>`).join('')}
+function tHome(){const p=plan(),t=iso(today),todays=p.filter(x=>x.date===t),next=p.filter(x=>x.date>t&&(x.kind==='Pooja'||x.kind==='Vrat')).slice(0,3),doneN=todays.filter(x=>S.done[x.id]).length,pc=panchang(today);
+ return `<section class="screen stack">
+ <div class="row between"><div><p class="eyebrow">नमस्कार</p><h1>${esc(S.user.name.split(' ')[0])}</h1></div><div class="mark" style="width:44px;height:44px;font-size:22px">इ</div></div>
+ ${countdownCard()}
+ <button class="card" data-tab="jyotish" style="text-align:left;font-weight:400">
+  <span class="row between" style="width:100%"><span class="eyebrow">Today's panchang · ${pc.vara}</span><span class="small" style="color:var(--accent);font-weight:600">Open →</span></span>
+  <span class="grid2" style="width:100%;font-size:14.5px"><span><span class="muted tiny">Tithi</span><br><strong>${pc.tithi}</strong></span><span><span class="muted tiny">Nakshatra</span><br><strong>${pc.nak}</strong></span><span><span class="muted tiny">Sunrise</span><br><strong>${pc.rise}</strong></span><span><span class="muted tiny">Rahu kaal</span><br><strong>${pc.rahu}</strong></span></span>
+ </button>
+ <div class="card"><div class="row between"><h3>Today's devotion</h3><span class="pill ${doneN===todays.length?'ok':''}">${doneN} of ${todays.length} done</span></div>${todoList(todays,false)}</div>
+ <div class="grid2">
+  <button class="card" style="align-items:flex-start;font-weight:400" data-go="mantra"><strong style="color:var(--accent);font-size:22px">${S.mantra%108}/108</strong><span class="small">Mantra counter · ${Math.floor(S.mantra/108)} malas today</span></button>
+  <button class="card" style="align-items:flex-start;font-weight:400" data-go="proofs"><strong style="color:var(--accent);font-size:17px">Temple proofs</strong><span class="small">Opening soon</span></button>
+  <button class="card" style="align-items:flex-start;font-weight:400" data-go="vrat"><strong style="color:var(--accent);font-size:17px">Vrat finder</strong><span class="small">Free · for any wish</span></button>
+  <button class="card" style="align-items:flex-start;font-weight:400" data-go="offer"><strong style="color:var(--accent);font-size:17px">Seva and daan</strong><span class="small">Bookings opening soon</span></button>
+ </div>
+ <div class="card"><h3>Coming up</h3>${next.map(x=>`<div class="row between" style="flex-wrap:nowrap"><span class="small" style="min-width:0">${esc(x.text)}</span><span class="pill">${fmt(x.date)}</span></div>`).join('')||'<p class="small muted">Nothing scheduled yet.</p>'}</div>
+ </section>`}
+function tSankalp(){const p=plan(),t=iso(today),up=p.filter(x=>x.date>=t),days=[...new Set(up.map(x=>x.date))].slice(0,7),left=daysBetween(today,S.user.deadline),
+  doneCount=p.filter(x=>x.date<t||S.done[x.id]).length,vr=p.filter(x=>x.kind==='Vrat'&&x.date>=t).slice(0,4);
+ return `<section class="screen stack"><h1>My sankalp</h1>${countdownCard()}
+ <div class="card"><h3>Your devotional plan</h3>
+  <dl class="kv"><dt>Daily jap</dt><dd>${[...new Set(S.sites.map(s=>site(s).mantra))].join(' · ')} × 108</dd><dt>Daily prayer</dt><dd>${WISH_DAILY[S.user.wish]}</dd>
+  <dt>Weekly puja</dt><dd>One for each day's deity: Surya, Shiva, Hanuman, Ganesh, Guru, Devi, Shani</dd><dt>Daan</dt><dd>Every Sunday: annadan, vastra, dhan, gau seva in turn</dd>
+  <dt>Vrat days</dt><dd>${vr.map(x=>x.text.split(' · ')[0]+' '+fmt(x.date)).join(', ')||'—'}</dd><dt>Done so far</dt><dd>${doneCount} acts of devotion</dd></dl></div>
+ <div class="card"><div class="row between"><h3>The next 7 days</h3><span class="pill">${up.length} to go</span></div>
+  ${days.map(d=>`<div class="day-head">${d===t?'Today':fmt(d)} · ${VARA[fromIso(d).getDay()]}</div>${todoList(up.filter(x=>x.date===d),false)}`).join('')}</div>
+ <div class="card"><h3>${left<=0?'Your deadline has passed':'When your deadline arrives'}</h3><p class="small muted">Tell us how it went. If your wish came true, you can fulfil your mannat from anywhere.</p><button class="btn-primary" data-go="outcome">Did your wish come true?</button></div>
+ <p class="tiny muted">Prayer and guidance, not guaranteed results.</p></section>`}
+function wheel(now,moonR){const c=160,R=150,pos=(L,r)=>{const a=(180+L)*D2R;return[c+r*Math.cos(a),c-r*Math.sin(a)]};
+ let s=`<svg viewBox="0 0 320 320" class="wheel" role="img" aria-label="Zodiac wheel showing where each planet is now">`;
+ s+=`<circle cx="${c}" cy="${c}" r="${R}" class="w-ring"/><circle cx="${c}" cy="${c}" r="${R-36}" class="w-ring"/><circle cx="${c}" cy="${c}" r="34" class="w-ring"/>`;
+ const a1=moonR*30,a2=a1+30,[x1,y1]=pos(a1,R),[x2,y2]=pos(a2,R),[x3,y3]=pos(a2,34),[x4,y4]=pos(a1,34);
+ s+=`<path d="M${x1} ${y1} A${R} ${R} 0 0 0 ${x2} ${y2} L${x3} ${y3} A34 34 0 0 1 ${x4} ${y4} Z" class="w-you"/>`;
+ for(let i=0;i<12;i++){const [a,b]=pos(i*30,R),[e,f]=pos(i*30,34);s+=`<line x1="${a}" y1="${b}" x2="${e}" y2="${f}" class="w-line"/>`;const [tx,ty]=pos(i*30+15,R-18);s+=`<text x="${tx}" y="${ty+4}" class="w-sign">${RASHI_S[i]}</text>`}
+ const cnt={};Object.keys(PL).forEach(k=>{const r=Math.floor(now[k]/30);cnt[r]=(cnt[r]||0)+1;const n=cnt[r]-1,L=r*30+6+n*6,rad=R-56-n*13,[x,y]=pos(L,rad);
+  s+=`<circle cx="${x}" cy="${y}" r="10.5" class="w-pl ${k}"/><text x="${x}" y="${y+3.6}" class="w-pt">${k}</text>`});
+ s+=`<text x="${c}" y="${c-4}" class="w-c">Gochar</text><text x="${c}" y="${c+11}" class="w-c2">${fmt(today)}</text></svg>`;return s}
+function tJyotish(){const pc=panchang(today),n=natal(),now=sidereal(new Date()),prev=sidereal(addDays(new Date(),-1)),moonIdx=n?n.rashi:RASHI.indexOf(S.user.rashi),moonR=moonIdx>=0?moonIdx:Math.floor(now.Mo/30),dz=doshas();
+ const sp=[];for(let i=0;i<30;i++){const d=addDays(today,i),p=panchang(d),k=specialDay(p.t);if(k&&!(sp.length&&sp[sp.length-1].k===k&&daysBetween(sp[sp.length-1].d,d)<2))sp.push({d,k})}
+ return `<section class="screen stack"><h1>Panchang and grahas</h1>
+ <div class="card"><div class="row between"><h3>Today · ${pc.vara}</h3><span class="pill">${esc(S.user.city)}</span></div>
+  <dl class="kv"><dt>Tithi</dt><dd>${pc.tithi}</dd><dt>Nakshatra</dt><dd>${pc.nak}</dd><dt>Yoga</dt><dd>${pc.yoga}</dd><dt>Karana</dt><dd>${pc.karana}</dd><dt>Moon in</dt><dd>${pc.moonRashi}</dd><dt>Sunrise</dt><dd>${pc.rise}</dd><dt>Sunset</dt><dd>${pc.set}</dd><dt>Rahu kaal</dt><dd>${pc.rahu}</dd></dl>
+  <p class="tiny muted">Calculated at sunrise for your city. Timings can differ by a few minutes from a printed panchang.</p></div>
+ <div class="card"><h3>Vrat and festival days ahead</h3>${sp.slice(0,8).map(x=>`<div class="row between" style="flex-wrap:nowrap"><span>${x.k}</span><span class="pill">${fmt(x.d)} · ${VARA[x.d.getDay()].replace('var','')}</span></div>`).join('')}</div>
+ <div class="card"><div class="row between"><h3>Where the planets are now</h3>${moonIdx>=0?`<span class="pill ok">Your Moon: ${RASHI[moonR]}</span>`:`<span class="pill warn">Add birth date</span>`}</div>
+  <div class="wheel-wrap">${wheel(now,moonR)}</div>
+  <p class="tiny muted">Shaded house is your Moon sign. Houses below are counted from it (Chandra kundali), the usual way to read gochar.</p>
+  <div class="stack" style="gap:0">${Object.keys(PL).map(k=>{const h=houseFrom(moonR,now[k]),good=GOOD[k].includes(h),retro=!['Su','Mo','Ra','Ke'].includes(k)&&rev(now[k]-prev[k])>180;
+   return `<div class="planet"><span class="w-dot ${k}">${k}</span><span style="min-width:0;flex:1"><strong>${PL[k][0]}</strong> <span class="muted small">${PL[k][1]}${retro?' · retrograde':''}</span>
+    <div class="small">${RASHI[Math.floor(now[k]/30)]} ${Math.floor(now[k]%30)}° · your ${h}${['th','st','nd','rd'][h%10>3||[11,12,13].includes(h)?0:h%10]} house</div>${good?'':`<div class="tiny muted">Devotion: ${CARE[k]}</div>`}</span>
+    <span class="pill ${good?'ok':'warn'}">${good?'Supportive':'Needs care'}</span></div>`}).join('')}</div></div>
+ <div class="card"><h3>Dosha check</h3>${dz.length?'':'<p class="small muted">Add your date and time of birth in Profile to see Sade Sati, Mangal dosha and Kaal Sarp indications.</p><button class="btn-ghost" data-go="register0">Add birth details →</button>'}${dz.map(d=>`<div class="dosha"><div class="row between"><strong>${d.k}</strong><span class="pill ${d.on?'warn':'ok'}">${d.on?'Present':'Not present'}</span></div><p class="small">${d.txt}</p>${d.dev?`<p class="small muted">Commonly done: ${d.dev}</p>`:''}</div>`).join('')}
+  <p class="tiny muted">Traditional jyotish indications, worked out approximately from your birth details. They are not predictions. Ask your priest to read your full kundali before any decision.</p></div>
+ </section>`}
+function tPriests(){return `<section class="screen stack"><h1>Your temples</h1>
+ ${S.sites.map(site).map(s=>`<div class="card"><div class="row between"><strong style="font-size:18px">${s.name}</strong><span class="pill">${s.type}</span></div>
+  <p class="small muted">${s.place} · ${s.deity}</p><dl class="kv"><dt>Aarti</dt><dd>${s.aarti}</dd><dt>Services</dt><dd>${s.services}</dd><dt>Mantra</dt><dd>${s.mantra}</dd></dl>
+  <div class="grid2"><a class="btn" style="display:grid;place-items:center;text-decoration:none" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name+', '+s.place)}">Directions</a><button data-act="share" data-share="${esc(s.name)}">Share</button></div></div>`).join('')}
+ <button data-go="sites">Change sites</button>
+ <div class="card" style="border:2px dashed var(--line)"><div class="row between"><h3>Priests</h3><span class="pill warn">Opening soon</span></div>
+  <p class="small muted">Priests verified by each temple trust will be able to read your sankalp in your name, send video proof and perform poojas you book, paid directly to the trust.</p>
+ </div>
+ <p class="tiny muted">Aarti timings are typical and can change on festival days. Check with the temple before travelling.</p></section>`}
+function tProfile(){const u=S.user;return `<section class="screen stack">${demoBar()}<h1>Profile</h1>
+ <div class="card"><div class="row between"><h3>${esc(u.name)}</h3><button class="btn-ghost" data-go="register0">Edit</button></div>
+ <dl class="kv"><dt>Born</dt><dd>${esc(born(u))}</dd><dt>City</dt><dd>${esc(u.city)}</dd><dt>Gotra</dt><dd>${esc(u.gotra)||'—'}</dd><dt>Rashi</dt><dd>${esc(u.rashi)||'—'}</dd><dt>Nakshatra</dt><dd>${esc(u.nakshatra)||'—'}</dd></dl></div>
+ <div class="card"><div class="row between"><h3>Family</h3><button class="btn-ghost" data-go="register2">Edit</button></div>${u.family.map(f=>`<div class="row between"><span>${esc(f.name)}</span><span class="small muted">${esc(f.rel)}</span></div>`).join('')||'<p class="small muted">No family members added.</p>'}</div>
+ <div class="card"><h3>Payments</h3><p class="small muted">None. Icchamarg is free; temple bookings will be paid directly to each temple trust once they open.</p></div>
+ <div class="card"><h3>Settings</h3>
+  <div class="row between"><span>Language</span><select id="lang" style="width:auto">${['English','मराठी','हिंदी','ગુજરાતી'].map(l=>`<option ${S.lang===l?'selected':''}>${l}</option>`).join('')}</select></div>
+  ${S.lang!=='English'?'<p class="tiny muted">Full translation is coming; the app shows English for now.</p>':''}
+  <div class="row between"><span>Daily reminder</span><input id="remind" type="time" value="${esc(S.remind)}" style="width:auto"></div>
+  <button data-act="calendar">Add daily reminder to my calendar</button>
+  ${installCard()}
+  <button data-act="share">Share Icchamarg</button>
+  <button data-act="export">Download my data</button>
+  <div id="delBox"><button data-act="del" style="color:var(--warn)">Delete my data</button></div></div>
+ <p class="tiny muted">Your details are stored only in this browser on this device. Nothing is sent to a server.</p></section>`}
+
+/* ---------- sub pages ---------- */
+function vMantra(){const s=S.sites.length?site(S.sites[0]):{mantra:'ॐ नमः शिवाय'};return `<section class="screen stack" style="text-align:center">
+ <button class="btn-ghost" data-go="home">← Back</button><p class="eyebrow">Mantra counter · जप माळ</p><h1>${s.mantra}</h1>
+ <button class="mantra" data-act="count" aria-label="Count one chant"><span class="n">${S.mantra%108}</span><span>of 108</span></button>
+ <div class="grid2"><div class="card"><strong style="font-size:24px">${Math.floor(S.mantra/108)}</strong><span class="small muted">Malas today</span></div><div class="card"><strong style="font-size:24px">${streak()}</strong><span class="small muted">Days in a row</span></div></div>
+ <button data-act="resetMantra">Reset</button></section>`}
+function vProofs(){return `<section class="screen stack"><button class="btn-ghost" data-go="home">← Back</button><h1>Proofs from temples</h1>
+ <div class="card"><div class="video">Temple videos will appear here</div><div class="row between"><strong>Opening soon</strong><span class="pill warn">Not live yet</span></div>
+  <p class="small muted">When temples start accepting sankalps, every reading, pooja and prasad will come with a timestamped video, photo or courier tracking, shown here.</p></div>
+</section>`}
+function vVrat(){const w=S.vratWish||S.user.wish;return `<section class="screen stack"><button class="btn-ghost" data-go="home">← Back</button><span class="pill ok" style="align-self:flex-start">Free</span><h1>Find the right vrat</h1>
+ <div class="chips">${WISHES.map(x=>`<button class="chip" data-vrat="${x[0]}" aria-pressed="${w===x[0]}">${x[1]}</button>`).join('')}</div>
+ <div class="card"><p class="eyebrow">Commonly followed for ${wishName(w).toLowerCase()}</p><p style="font-size:17px">${VRAT[w]}</p><p class="small muted">Ask your priest to confirm the right practice for you.</p></div>
+ ${w==='health'?'<p class="notice">For health wishes, please continue your doctor’s treatment.</p>':''}</section>`}
+function vOffer(){const s=S.sites.length?site(S.sites[0]):null,items=[['Diya in your name',51,'Photo at evening aarti'],['Archana with your name and gotra',101,'Video proof'],['Annadan · feeds 50 devotees',1100,'Photo proof'],['Vastra daan · clothes for the needy',501,'Photo proof'],['Gau seva in your name',151,'Photo proof'],['Prasad delivered home',251,'Courier tracking']];
+ return `<section class="screen stack"><button class="btn-ghost" data-go="home">← Back</button><h1>Seva and daan</h1><p class="notice">Bookings are not open yet. Prices shown are indicative; when they open, you will pay the temple trust directly.</p>
+ ${items.map(([n,p,proof])=>`<div class="card row between" style="flex-wrap:nowrap"><div style="min-width:0"><strong>${n}</strong><div class="tiny muted">${proof} · from ₹${p.toLocaleString('en-IN')}</div></div><span class="pill">Soon</span></div>`).join('')}
+ <div class="card"><h3>Do it yourself today</h3><p class="small muted">Light a diya at home, feed someone in need, or donate clothes at a local temple. Tick it off in your daily plan.</p></div>
+</section>`}
+function vOutcome(){return `<section class="screen stack"><button class="btn-ghost" data-go="sankalpTab">← Back</button><h1>Did your wish come true?</h1>
+ <div class="grid2"><button class="${S.outcome==='yes'?'btn-primary':''}" data-outcome="yes">Yes</button><button class="${S.outcome==='notyet'?'btn-primary':''}" data-outcome="notyet">Not yet</button></div>
+ ${S.outcome==='yes'?`<div class="hero"><h2>Fulfil your mannat · नवस फेडा</h2><p class="muted small">Your wish came true. Take a moment to give thanks.</p></div>
+  <div class="card"><p class="small">Mannat poojas, annadan and diyas at your sites open soon. Today, you can offer thanks with a visit, a diya at home, or annadan near you.</p></div>
+  <button data-act="share">Share a thanks card with family</button>`:''}
+ ${S.outcome==='notyet'?`<div class="card"><h3>Keep going</h3><p class="small muted">Many wishes take more time. Start a new sankalp with a fresh deadline.</p><button class="btn-primary" data-act="newSankalp">Start a new sankalp</button></div>`:''}</section>`}
+
+/* ---------- render ---------- */
+const ICON={home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',sankalp:'<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',jyotish:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',priests:'<path d="M12 2v3M8 9l4-4 4 4M6 21V11h12v10M3 21h18M10 21v-5h4v5"/>',profile:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/>'};
+function renderTabs(){const t=$('#tabs'),inApp=S.screen==='app';t.hidden=!inApp;if(!inApp)return;
+ $('#tabsIn').innerHTML=[['home','Home'],['sankalp','Sankalp'],['jyotish','Jyotish'],['priests','Temples'],['profile','Profile']].map(([k,l])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k]}</svg>${l}</button>`).join('')}
+function render(){const v={welcome:vWelcome,register:vRegister,sites:vSites,review:vReview,paid:vPaid,mantra:vMantra,proofs:vProofs,vrat:vVrat,offer:vOffer,outcome:vOutcome,
+  app:()=>({home:tHome,sankalp:tSankalp,jyotish:tJyotish,priests:tPriests,profile:tProfile}[S.tab])()}[S.screen];
+ $('#app').innerHTML=(v||vWelcome)();renderTabs();window.scrollTo(0,0);saveState()}
+function readReg(){const g=id=>{const e=document.getElementById(id);return e?e.value:undefined},u=S.user;
+ if(S.regStep===0){u.name=g('name')||u.name;u.gender=g('gender');u.city=g('city');u.dob=g('dob')||u.dob;u.tob=g('tob');u.pob=g('pob');syncVedic()}
+ if(S.regStep===1){u.gotra=g('gotra');u.vedicManual=document.getElementById('vedicManual').checked;if(u.vedicManual){u.rashi=g('rashi');u.nakshatra=g('nakshatra')}else syncVedic()}
+ if(S.regStep===3){u.wishText=g('wishText');u.deadline=g('deadline')||u.deadline;u.consent=document.getElementById('consent').checked}}
+function go(k){if(k==='demoHome')startDemo();else if(k==='login'||k==='logout'||k==='welcome')S.screen='welcome';else if(k.startsWith('register')){S.screen='register';S.regStep=+k.slice(8)}
+ else if(k==='home'){S.screen='app';S.tab='home'}else if(k==='sankalpTab'){S.screen='app';S.tab='sankalp'}else S.screen=k;render()}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+ if(d.go){e.preventDefault();go(d.go);return}
+ if(d.tab){S.screen='app';S.tab=d.tab;render();return}
+ if(d.wish){S.user.wishText=document.getElementById('wishText').value;S.user.deadline=document.getElementById('deadline').value;S.user.wish=d.wish;render();return}
+ if(d.site){const i=S.sites.indexOf(d.site);i<0?S.sites.push(d.site):S.sites.splice(i,1);render();return}
+ if(d.rmfam!==undefined){S.user.family.splice(+d.rmfam,1);render();return}
+ if(d.vrat){S.vratWish=d.vrat;render();return}
+ if(d.outcome){S.outcome=d.outcome;render();return}
+ const a=d.act;if(!a)return;
+ if(a==='music'){musicOn=!musicOn;b.setAttribute('aria-pressed',musicOn);b.textContent=musicOn?'♪ Music on':'♪ Temple music';musicOn?startMusic():stopMusic();return}
+ if(a==='regBack'){if(S.regStep===0)S.screen=S.paid?'app':'welcome';else{readReg();S.regStep--}render()}
+ if(a==='addFam'){const n=document.getElementById('famName').value.trim();if(!n){toast('Type a name first.');return}S.user.family.push({name:n,rel:document.getElementById('famRel').value});render()}
+ if(a==='pay'){S.paid=true;S.startedOn=iso(today);S.done={};S.outcome=null;planCache=null;go('paid')}
+ if(a==='count'){S.mantra++;S.mantraDay=iso(today);if(!S.mantraDays.includes(iso(today)))S.mantraDays.push(iso(today));if(navigator.vibrate)navigator.vibrate(12);render();if(S.mantra%108===0)toast('One mala complete.')}
+ if(a==='resetMantra'){S.mantra=0;render()}
+ if(a==='del')$('#delBox').innerHTML='<p class="small">Delete your profile, sankalp and family details? This cannot be undone.</p><div class="grid2"><button data-act="delNo">Keep</button><button class="btn-primary" data-act="delYes">Delete</button></div>';
+ if(a==='delNo')render();
+ if(a==='delYes'){try{localStorage.removeItem(STORE_KEY)}catch(e){}S=freshState();planCache=null;render();toast('All your data on this device is deleted.')}
+ if(a==='demo'){startDemo();render()}
+ if(a==='leaveDemo')leaveDemo();
+ if(a==='newSankalp'){S.outcome=null;S.done={};S.user.wishText='';S.user.deadline=iso(addDays(today,45));planCache=null;go('register3')}
+ if(a==='install'&&deferredInstall){deferredInstall.prompt();deferredInstall.userChoice.finally(()=>{deferredInstall=null;render()})}
+ if(a==='share'){const d={title:'Icchamarg',text:d0(b),url:location.origin+location.pathname};if(navigator.share)navigator.share(d).catch(()=>{});else{navigator.clipboard&&navigator.clipboard.writeText(d.url);toast('Link copied.')}}
+ if(a==='export'){const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const u=URL.createObjectURL(blob);const l=document.createElement('a');l.href=u;l.download='icchamarg-my-data.json';l.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+ if(a==='calendar')downloadReminder();});
+function d0(b){return b.dataset.share?b.dataset.share+' · on Icchamarg, the path of your wish':(S.outcome==='yes'?'My wish came true. Thank you for your blessings! 🙏':'Icchamarg · register your sankalp and follow a daily devotional plan')}
+function downloadReminder(){const [h,m]=(S.remind||'06:30').split(':');const d=iso(today).replace(/-/g,'');const end=S.user.deadline.replace(/-/g,'');
+ const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Icchamarg//EN','BEGIN:VEVENT','UID:icchamarg-'+Date.now()+'@icchamarg','DTSTAMP:'+d+'T000000Z',
+  'DTSTART;TZID=Asia/Kolkata:'+d+'T'+h+m+'00','DURATION:PT15M','RRULE:FREQ=DAILY;UNTIL='+end+'T235959Z','SUMMARY:Icchamarg · today\'s puja and jap',
+  'DESCRIPTION:Open Icchamarg for today\'s devotion: '+location.origin+location.pathname,'BEGIN:VALARM','TRIGGER:PT0M','ACTION:DISPLAY','DESCRIPTION:Icchamarg','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+ const u=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));const l=document.createElement('a');l.href=u;l.download='icchamarg-reminder.ics';l.click();setTimeout(()=>URL.revokeObjectURL(u),1000);toast('Open the file to add the reminder to your calendar.')}
+document.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
+  if(f.id==='regForm'){readReg();if(S.regStep===0&&!S.user.name.trim()){toast('Enter your name.');return}
+  if(S.regStep===3){if(!S.user.wishText.trim()){toast('Write your sankalp in a few words.');return}if(!S.user.consent){toast('Please tick the box to continue.');return}planCache=null;go(S.paid?'sankalpTab':'sites');return}
+  S.regStep++;render()}});
+document.addEventListener('change',e=>{const t=e.target;
+ if(t.id==='lang'){S.lang=t.value;render();return}
+ if(t.id==='remind'){S.remind=t.value;saveState();return}
+ if(t.dataset.todo){S.done[t.dataset.todo]=t.checked;render()}
+ if(t.id==='vedicManual')document.getElementById('vedicFields').hidden=!t.checked;
+ if(t.id==='deadline'){const n=document.getElementById('dlNote');if(n)n.textContent=daysBetween(today,t.value)+' days to complete your sankalp. Your puja, vrat and daan schedule is planned before this date.'}});
+let deferredInstall=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;if(['welcome','paid'].includes(S.screen)||(S.screen==='app'&&S.tab==='profile'))render()});
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+render();
+
+/* ---------- temple music (generated live: tanpura drone, temple bell, flute in raag Bhupali) ---------- */
+let AC=null,master=null,musicOn=false,musicTimer=null;
+function startMusic(){
+ try{AC=AC||new (window.AudioContext||window.webkitAudioContext)()}catch(e){toast('Music is not supported in this browser.');return}
+ AC.resume();master=AC.createGain();master.gain.setValueAtTime(0,AC.currentTime);master.gain.linearRampToValueAtTime(0.55,AC.currentTime+2);master.connect(AC.destination);
+ const bus=AC.createGain(),delay=AC.createDelay(),fb=AC.createGain();delay.delayTime.value=0.34;fb.gain.value=0.32;bus.connect(master);bus.connect(delay);delay.connect(fb);fb.connect(delay);delay.connect(master);
+ const Sa=146.83,tan=[Sa*1.5,Sa*2,Sa*2,Sa],scale=[1,9/8,5/4,3/2,5/3,2,9/4,5/2];let ti=0,ni=3;
+ function pluck(f,t){[1,1.004].forEach(m=>{const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=f*m;const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1100;lp.Q.value=3;const g=AC.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.05,t+0.03);g.gain.exponentialRampToValueAtTime(0.0005,t+4);o.connect(lp);lp.connect(g);g.connect(bus);o.start(t);o.stop(t+4.1)})}
+ function bell(t){[1,2.76,5.4,8.93].forEach((m,i)=>{const o=AC.createOscillator();o.type='sine';o.frequency.value=Sa*4*m;const g=AC.createGain();g.gain.setValueAtTime(0.09/(i+1),t);g.gain.exponentialRampToValueAtTime(0.0004,t+4.5-i*0.7);o.connect(g);g.connect(bus);o.start(t);o.stop(t+4.6)})}
+ function flute(t){ni=Math.max(0,Math.min(scale.length-1,ni+[-2,-1,-1,0,1,1,2][Math.floor(Math.random()*7)]));const f=Sa*2*scale[ni],d=0.5+Math.random()*1.3;
+  const o=AC.createOscillator();o.type='sine';o.frequency.value=f;const lfo=AC.createOscillator();lfo.frequency.value=5.2;const lg=AC.createGain();lg.gain.value=f*0.007;lfo.connect(lg);lg.connect(o.frequency);
+  const g=AC.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.07,t+0.12);g.gain.setValueAtTime(0.07,t+d-0.15);g.gain.linearRampToValueAtTime(0,t+d);
+  o.connect(g);g.connect(bus);o.start(t);lfo.start(t);o.stop(t+d+0.05);lfo.stop(t+d+0.05);return d}
+ let next=AC.currentTime+0.1,bnext=AC.currentTime+0.6,fnext=AC.currentTime+3;
+ function sched(){const h=AC.currentTime+1;while(next<h){pluck(tan[ti%4],next);ti++;next+=1.15}while(bnext<h){bell(bnext);bnext+=10+Math.random()*8}while(fnext<h){const d=flute(fnext);fnext+=d+(Math.random()<0.25?1.4:0.06)}}
+ sched();clearInterval(musicTimer);musicTimer=setInterval(sched,250)}
+function stopMusic(){clearInterval(musicTimer);if(master&&AC){const m=master;m.gain.cancelScheduledValues(AC.currentTime);m.gain.setValueAtTime(m.gain.value,AC.currentTime);m.gain.linearRampToValueAtTime(0,AC.currentTime+0.8);setTimeout(()=>m.disconnect(),900)}}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "Icchamarg · इच्छामार्ग",
+  "short_name": "Icchamarg",
+  "description": "Register your sankalp and follow a daily puja, vrat, jap and daan plan with live panchang.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FCF9F4",
+  "theme_color": "#5A1712",
+  "lang": "en-IN",
+  "categories": ["lifestyle", "religion"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
