@@ -26,15 +26,22 @@
   --r:14px; color-scheme:light;
 }
 *{box-sizing:border-box}
-body{background:var(--page);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45;
-  padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));min-height:100vh}
+html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none}
+body{background:var(--page);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+/* App shell: fixed app bar + scrolling content + fixed tab bar. Full screen on phones, a centred phone frame on wide screens. */
+.shell{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+.appbar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--bg);border-bottom:1px solid var(--line);
+  padding:calc(8px + env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) 8px max(16px, env(safe-area-inset-left,0px));min-height:56px}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--display);font-size:20px;color:var(--maroon);user-select:none}
+.brand i{width:30px;height:30px;border-radius:50%;background:var(--maroon);color:var(--gold);display:grid;place-items:center;font-style:normal;font-size:16px}
+@media (min-width:600px){.shell{inset:auto;top:24px;bottom:24px;left:50%;transform:translateX(-50%);width:440px;border-radius:26px;border:1px solid var(--line);box-shadow:0 10px 36px rgba(90,23,18,.10)}}
 :root{--page:#FCF9F4; --mandala:#C9962E}
 .mandala{position:fixed;right:-140px;bottom:-140px;width:460px;max-width:none;height:460px;color:var(--mandala);opacity:.16;z-index:0;pointer-events:none}
 .mandala.tl{right:auto;bottom:auto;left:-170px;top:-170px;width:380px;height:380px;opacity:.1}
-.app{position:relative;z-index:2;max-width:440px;margin:56px auto 110px;padding:16px 16px 24px;display:flex;flex-direction:column;gap:14px;
-  background:var(--bg);border-radius:26px;border:1px solid var(--line);box-shadow:0 10px 36px rgba(90,23,18,.08)}
-.music{position:fixed;z-index:8;top:calc(12px + env(safe-area-inset-top,0px));right:max(12px, calc(env(safe-area-inset-right,0px) + 12px));
-  min-height:40px;border-radius:999px;background:var(--surface);color:var(--accent);border:1px solid var(--line);padding:0 14px;font-size:14px;box-shadow:0 4px 14px rgba(90,23,18,.08)}
+.app{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  padding:16px max(16px, env(safe-area-inset-right,0px)) 28px max(16px, env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+.music{flex:none;
+  min-height:38px;border-radius:999px;background:var(--surface);color:var(--accent);border:1px solid var(--line);padding:0 14px;font-size:14px;box-shadow:0 4px 14px rgba(90,23,18,.08)}
 .music[aria-pressed="true"]{background:var(--accent);color:var(--onaccent);border-color:var(--accent)}
 .ganesh{width:150px;height:auto;color:var(--gold);align-self:center}
 .ganesh-hero{background:var(--maroon);border-radius:20px;padding:18px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--onmaroon);text-align:center}
@@ -49,6 +56,8 @@ p{margin:0}
 .stack{display:flex;flex-direction:column;gap:12px}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .between{justify-content:space-between}
+.card.row{flex-direction:row}
+button.card{text-align:left}
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .hero{background:var(--maroon);color:var(--onmaroon);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:8px}
@@ -87,9 +96,10 @@ textarea{min-height:76px;resize:vertical}
 .todo input{width:22px;height:22px;min-height:0;flex:none;margin-top:2px;accent-color:var(--ok)}
 .todo .when{font-size:12.5px;color:var(--muted)}
 .done-text{text-decoration:line-through;color:var(--muted)}
-.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);
+.tabs{flex:none;background:var(--surface);border-top:1px solid var(--line);user-select:none;
   padding:6px max(8px, env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(8px, env(safe-area-inset-left,0px));z-index:5}
-.tabs .in{max-width:440px;margin:0 auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.tabs[hidden]{display:none}
+.tabs .in{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
 .tabs button{border:none;background:transparent;min-height:50px;padding:0;font-size:13px;font-weight:500;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 .tabs button[aria-current="page"]{color:var(--accent);font-weight:700}
 .tabs svg{width:22px;height:22px}
@@ -100,11 +110,11 @@ textarea{min-height:76px;resize:vertical}
 .kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:600;min-width:0;overflow-wrap:anywhere}
 .otp{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
 .otp input{text-align:center;font-size:22px;font-weight:700;padding:0}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:9;max-width:90vw}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:9;max-width:90vw}
 .demo{font-size:13px;background:var(--warnbg);color:var(--warn);border-radius:12px;padding:8px 12px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .demo button{min-height:34px;font-size:13px;padding:0 10px}
 .notice{background:var(--sunk);border-radius:12px;padding:10px 12px;font-size:13.5px;color:var(--muted)}
-@media (prefers-reduced-motion: no-preference){.screen{animation:in .22s ease-out}@keyframes in{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}}
+@media (prefers-reduced-motion: no-preference){.screen.enter{animation:in .22s ease-out}@keyframes in{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}}
 .kind{flex:none;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:2px 8px;background:var(--sunk);color:var(--muted);margin-top:2px}
 .k-Vrat{background:#FCE7D6;color:#8A3605} .k-Pooja{background:#F6E2E0;color:#7A1F1A} .k-Daan{background:var(--okbg);color:var(--ok)} .k-Jap{background:#F3EAD2;color:#6E5212}
 .day-head{margin-top:10px;font-size:13px;font-weight:700;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px}
@@ -143,9 +153,11 @@ textarea{min-height:76px;resize:vertical}
 </g></defs></svg>
 <svg class="mandala" viewBox="0 0 400 400" aria-hidden="true"><use href="#mandalaArt"/></svg>
 <svg class="mandala tl" viewBox="0 0 400 400" aria-hidden="true"><use href="#mandalaArt"/></svg>
-<button class="music" id="musicBtn" data-act="music" aria-pressed="false">♪ Temple music</button>
-<div class="app" id="app" aria-live="polite"></div>
-<nav class="tabs" id="tabs" hidden aria-label="Main"><div class="in" id="tabsIn"></div></nav>
+<div class="shell">
+ <header class="appbar"><span class="brand"><i aria-hidden="true">इ</i>Icchamarg</span><button class="music" id="musicBtn" data-act="music" aria-pressed="false">♪ Temple music</button></header>
+ <main class="app" id="app" aria-live="polite"></main>
+ <nav class="tabs" id="tabs" hidden aria-label="Main"><div class="in" id="tabsIn"></div></nav>
+</div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -492,7 +504,13 @@ function renderTabs(){const t=$('#tabs'),inApp=S.screen==='app';t.hidden=!inApp;
  $('#tabsIn').innerHTML=[['home','Home'],['sankalp','Sankalp'],['jyotish','Jyotish'],['priests','Temples'],['profile','Profile']].map(([k,l])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k]}</svg>${l}</button>`).join('')}
 function render(){const v={welcome:vWelcome,register:vRegister,sites:vSites,review:vReview,paid:vPaid,mantra:vMantra,proofs:vProofs,vrat:vVrat,offer:vOffer,outcome:vOutcome,
   app:()=>({home:tHome,sankalp:tSankalp,jyotish:tJyotish,priests:tPriests,profile:tProfile}[S.tab])()}[S.screen];
- $('#app').innerHTML=(v||vWelcome)();renderTabs();window.scrollTo(0,0);saveState()}
+ const el=$('#app'),key=S.screen+(S.screen==='app'?':'+S.tab:'')+(S.screen==='register'?':'+S.regStep:''),same=key===lastView,top=el.scrollTop;
+ if(lastView)scrollMem[lastView]=top;
+ el.innerHTML=(v||vWelcome)();renderTabs();
+ el.scrollTop=same?top:(S.screen==='app'?(scrollMem[key]||0):0);
+ if(!same){const sc=el.querySelector('.screen');if(sc)sc.classList.add('enter')}
+ lastView=key;saveState()}
+let lastView=null;const scrollMem={};
 function readReg(){const g=id=>{const e=document.getElementById(id);return e?e.value:undefined},u=S.user;
  if(S.regStep===0){u.name=g('name')||u.name;u.gender=g('gender');u.city=g('city');u.dob=g('dob')||u.dob;u.tob=g('tob');u.pob=g('pob');syncVedic()}
  if(S.regStep===1){u.gotra=g('gotra');u.vedicManual=document.getElementById('vedicManual').checked;if(u.vedicManual){u.rashi=g('rashi');u.nakshatra=g('nakshatra')}else syncVedic()}
@@ -501,7 +519,7 @@ function go(k){if(k==='demoHome')startDemo();else if(k==='login'||k==='logout'||
  else if(k==='home'){S.screen='app';S.tab='home'}else if(k==='sankalpTab'){S.screen='app';S.tab='sankalp'}else S.screen=k;render()}
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
  if(d.go){e.preventDefault();go(d.go);return}
- if(d.tab){S.screen='app';S.tab=d.tab;render();return}
+ if(d.tab){if(S.screen==='app'&&S.tab===d.tab){$('#app').scrollTo({top:0,behavior:'smooth'});return}S.screen='app';S.tab=d.tab;render();return}
  if(d.wish){S.user.wishText=document.getElementById('wishText').value;S.user.deadline=document.getElementById('deadline').value;S.user.wish=d.wish;render();return}
  if(d.site){const i=S.sites.indexOf(d.site);i<0?S.sites.push(d.site):S.sites.splice(i,1);render();return}
  if(d.rmfam!==undefined){S.user.family.splice(+d.rmfam,1);render();return}
