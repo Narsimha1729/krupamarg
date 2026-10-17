@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Icchamarg · इच्छामार्ग</title>
+<title>Krupamarg · कृपामार्ग</title>
 <meta name="description" content="Register your sankalp, follow a daily puja, vrat and daan plan until your deadline, with live panchang and planet positions.">
 <meta name="theme-color" content="#5A1712">
 <link rel="manifest" href="manifest.webmanifest">
@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Icchamarg">
+<meta name="apple-mobile-web-app-title" content="Krupamarg">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&family=Rozha+One&display=swap">
 <style>
@@ -154,7 +154,7 @@ textarea{min-height:76px;resize:vertical}
 <svg class="mandala" viewBox="0 0 400 400" aria-hidden="true"><use href="#mandalaArt"/></svg>
 <svg class="mandala tl" viewBox="0 0 400 400" aria-hidden="true"><use href="#mandalaArt"/></svg>
 <div class="shell">
- <header class="appbar"><span class="brand"><i aria-hidden="true">इ</i>Icchamarg</span><button class="music" id="musicBtn" data-act="music" aria-pressed="false">♪ Temple music</button></header>
+ <header class="appbar"><span class="brand"><i aria-hidden="true">कृ</i>Krupamarg</span><button class="music" id="musicBtn" data-act="music" aria-pressed="false">♪ Temple music</button></header>
  <main class="app" id="app" aria-live="polite"></main>
  <nav class="tabs" id="tabs" hidden aria-label="Main"><div class="in" id="tabsIn"></div></nav>
 </div>
@@ -243,10 +243,10 @@ const daysBetween=(a,b)=>Math.round((fromIso(typeof b==='string'?b:iso(b))-fromI
 const SAMPLE_USER={name:'Aarav Patil',gender:'Male',dob:'2008-03-14',tob:'06:45',pob:'Chh. Sambhajinagar',city:'Pune',gotra:'Kashyap',nakshatra:'',rashi:'',vedicManual:false,
   family:[{name:'Sunita Patil',rel:'Mother'},{name:'Rajesh Patil',rel:'Father'}],wish:'exam',wishText:'Do well in my Class 12 board exams',deadline:iso(addDays(today,45)),consent:true};
 const BLANK_USER=()=>({name:'',gender:'Male',dob:'',tob:'',pob:'',city:'Pune',gotra:'',nakshatra:'',rashi:'',vedicManual:false,family:[],wish:'exam',wishText:'',deadline:iso(addDays(today,45)),consent:false});
-const STORE_KEY='icchamarg.v1';
+const STORE_KEY='krupamarg.v1',OLD_KEY='icchamarg.v1';
 function freshState(){return{screen:'welcome',tab:'home',regStep:0,user:BLANK_USER(),sites:[],priests:[],paid:false,demo:false,startedOn:iso(today),done:{},
  mantra:0,mantraDay:iso(today),mantraDays:[],outcome:null,offerings:[],remind:'06:30',lang:'English'}}
-function loadState(){try{const raw=localStorage.getItem(STORE_KEY);if(!raw)return null;const s=JSON.parse(raw);if(!s||!s.user)return null;
+function loadState(){try{const raw=localStorage.getItem(STORE_KEY)||localStorage.getItem(OLD_KEY);if(!raw)return null;const s=JSON.parse(raw);if(!s||!s.user)return null;
  const st={...freshState(),...s};if(!['welcome','register','sites','priests','review','app'].includes(st.screen))st.screen=st.paid?'app':'welcome';
  if(st.screen==='app'&&!st.paid)st.screen='welcome';return st}catch(e){return null}}
 function saveState(){if(S.demo)return;try{localStorage.setItem(STORE_KEY,JSON.stringify(S))}catch(e){}}
@@ -291,7 +291,7 @@ function vWelcome(){return `
 <section class="screen stack" style="padding-top:8px">
  <div class="ganesh-hero">
   <svg class="ganesh" viewBox="0 0 200 230" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Line drawing of Lord Ganesha"><use href="#ganeshArt"/></svg>
-  <h1 style="color:var(--onmaroon)">Icchamarg</h1><p style="color:var(--gold)">इच्छामार्ग · the path of your wish</p>
+  <h1 style="color:var(--onmaroon)">Krupamarg</h1><p style="color:var(--gold)">कृपामार्ग · the path of grace</p>
  </div>
  <p>Register your sankalp, choose sacred sites, and follow a devotional plan of puja, vrat, jap and daan until your deadline, with live panchang and planet positions.</p>
  <div class="card">
@@ -304,8 +304,8 @@ function vWelcome(){return `
 </section>`}
 function installCard(){if(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)return'';
  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
- if(deferredInstall)return'<div class="card row between" style="flex-wrap:nowrap"><span class="small">Install Icchamarg on this device for one-tap access.</span><button class="btn-primary" data-act="install">Install</button></div>';
- if(ios)return'<p class="notice">On iPhone: tap the Share button in Safari, then <strong>Add to Home Screen</strong> to install Icchamarg.</p>';return''}
+ if(deferredInstall)return'<div class="card row between" style="flex-wrap:nowrap"><span class="small">Install Krupamarg on this device for one-tap access.</span><button class="btn-primary" data-act="install">Install</button></div>';
+ if(ios)return'<p class="notice">On iPhone: tap the Share button in Safari, then <strong>Add to Home Screen</strong> to install Krupamarg.</p>';return''}
 const stepBar=n=>`<div class="steps" aria-label="Step ${n+1} of 4">${[0,1,2,3].map(i=>`<i class="${i<=n?'on':''}"></i>`).join('')}</div>`;
 function vRegister(){
  const u=S.user,st=S.regStep,titles=['About you','Vedic details','Family','Your sankalp'];let body='';
@@ -395,7 +395,7 @@ function todoList(items,showDate=true){return items.map(t=>`<label class="todo" 
  <span style="min-width:0;flex:1"><span class="${S.done[t.id]?'done-text':''}">${esc(t.text)}</span>${showDate?`<div class="when">${t.date===iso(today)?'Today':fmt(t.date)}</div>`:''}</span><span class="kind k-${t.kind}">${t.kind}</span></label>`).join('')}
 function tHome(){const p=plan(),t=iso(today),todays=p.filter(x=>x.date===t),next=p.filter(x=>x.date>t&&(x.kind==='Pooja'||x.kind==='Vrat')).slice(0,3),doneN=todays.filter(x=>S.done[x.id]).length,pc=panchang(today);
  return `<section class="screen stack">
- <div class="row between"><div><p class="eyebrow">नमस्कार</p><h1>${esc(S.user.name.split(' ')[0])}</h1></div><div class="mark" style="width:44px;height:44px;font-size:22px">इ</div></div>
+ <div class="row between"><div><p class="eyebrow">नमस्कार</p><h1>${esc(S.user.name.split(' ')[0])}</h1></div><div class="mark" style="width:44px;height:44px;font-size:22px">कृ</div></div>
  ${countdownCard()}
  <button class="card" data-tab="jyotish" style="text-align:left;font-weight:400">
   <span class="row between" style="width:100%"><span class="eyebrow">Today's panchang · ${pc.vara}</span><span class="small" style="color:var(--accent);font-weight:600">Open →</span></span>
@@ -460,14 +460,14 @@ function tProfile(){const u=S.user;return `<section class="screen stack">${demoB
  <div class="card"><div class="row between"><h3>${esc(u.name)}</h3><button class="btn-ghost" data-go="register0">Edit</button></div>
  <dl class="kv"><dt>Born</dt><dd>${esc(born(u))}</dd><dt>City</dt><dd>${esc(u.city)}</dd><dt>Gotra</dt><dd>${esc(u.gotra)||'—'}</dd><dt>Rashi</dt><dd>${esc(u.rashi)||'—'}</dd><dt>Nakshatra</dt><dd>${esc(u.nakshatra)||'—'}</dd></dl></div>
  <div class="card"><div class="row between"><h3>Family</h3><button class="btn-ghost" data-go="register2">Edit</button></div>${u.family.map(f=>`<div class="row between"><span>${esc(f.name)}</span><span class="small muted">${esc(f.rel)}</span></div>`).join('')||'<p class="small muted">No family members added.</p>'}</div>
- <div class="card"><h3>Payments</h3><p class="small muted">None. Icchamarg is free; temple bookings will be paid directly to each temple trust once they open.</p></div>
+ <div class="card"><h3>Payments</h3><p class="small muted">None. Krupamarg is free; temple bookings will be paid directly to each temple trust once they open.</p></div>
  <div class="card"><h3>Settings</h3>
   <div class="row between"><span>Language</span><select id="lang" style="width:auto">${['English','मराठी','हिंदी','ગુજરાતી'].map(l=>`<option ${S.lang===l?'selected':''}>${l}</option>`).join('')}</select></div>
   ${S.lang!=='English'?'<p class="tiny muted">Full translation is coming; the app shows English for now.</p>':''}
   <div class="row between"><span>Daily reminder</span><input id="remind" type="time" value="${esc(S.remind)}" style="width:auto"></div>
   <button data-act="calendar">Add daily reminder to my calendar</button>
   ${installCard()}
-  <button data-act="share">Share Icchamarg</button>
+  <button data-act="share">Share Krupamarg</button>
   <button data-act="export">Download my data</button>
   <div id="delBox"><button data-act="del" style="color:var(--warn)">Delete my data</button></div></div>
  <p class="tiny muted">Your details are stored only in this browser on this device. Nothing is sent to a server.</p></section>`}
@@ -534,20 +534,20 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
  if(a==='resetMantra'){S.mantra=0;render()}
  if(a==='del')$('#delBox').innerHTML='<p class="small">Delete your profile, sankalp and family details? This cannot be undone.</p><div class="grid2"><button data-act="delNo">Keep</button><button class="btn-primary" data-act="delYes">Delete</button></div>';
  if(a==='delNo')render();
- if(a==='delYes'){try{localStorage.removeItem(STORE_KEY)}catch(e){}S=freshState();planCache=null;render();toast('All your data on this device is deleted.')}
+ if(a==='delYes'){try{localStorage.removeItem(STORE_KEY);localStorage.removeItem(OLD_KEY)}catch(e){}S=freshState();planCache=null;render();toast('All your data on this device is deleted.')}
  if(a==='demo'){startDemo();render()}
  if(a==='leaveDemo')leaveDemo();
  if(a==='newSankalp'){S.outcome=null;S.done={};S.user.wishText='';S.user.deadline=iso(addDays(today,45));planCache=null;go('register3')}
  if(a==='install'&&deferredInstall){deferredInstall.prompt();deferredInstall.userChoice.finally(()=>{deferredInstall=null;render()})}
- if(a==='share'){const d={title:'Icchamarg',text:d0(b),url:location.origin+location.pathname};if(navigator.share)navigator.share(d).catch(()=>{});else{navigator.clipboard&&navigator.clipboard.writeText(d.url);toast('Link copied.')}}
- if(a==='export'){const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const u=URL.createObjectURL(blob);const l=document.createElement('a');l.href=u;l.download='icchamarg-my-data.json';l.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+ if(a==='share'){const d={title:'Krupamarg',text:d0(b),url:location.origin+location.pathname};if(navigator.share)navigator.share(d).catch(()=>{});else{navigator.clipboard&&navigator.clipboard.writeText(d.url);toast('Link copied.')}}
+ if(a==='export'){const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const u=URL.createObjectURL(blob);const l=document.createElement('a');l.href=u;l.download='krupamarg-my-data.json';l.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
  if(a==='calendar')downloadReminder();});
-function d0(b){return b.dataset.share?b.dataset.share+' · on Icchamarg, the path of your wish':(S.outcome==='yes'?'My wish came true. Thank you for your blessings! 🙏':'Icchamarg · register your sankalp and follow a daily devotional plan')}
+function d0(b){return b.dataset.share?b.dataset.share+' · on Krupamarg, the path of grace':(S.outcome==='yes'?'My wish came true. Thank you for your blessings! 🙏':'Krupamarg · register your sankalp and follow a daily devotional plan')}
 function downloadReminder(){const [h,m]=(S.remind||'06:30').split(':');const d=iso(today).replace(/-/g,'');const end=S.user.deadline.replace(/-/g,'');
- const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Icchamarg//EN','BEGIN:VEVENT','UID:icchamarg-'+Date.now()+'@icchamarg','DTSTAMP:'+d+'T000000Z',
-  'DTSTART;TZID=Asia/Kolkata:'+d+'T'+h+m+'00','DURATION:PT15M','RRULE:FREQ=DAILY;UNTIL='+end+'T235959Z','SUMMARY:Icchamarg · today\'s puja and jap',
-  'DESCRIPTION:Open Icchamarg for today\'s devotion: '+location.origin+location.pathname,'BEGIN:VALARM','TRIGGER:PT0M','ACTION:DISPLAY','DESCRIPTION:Icchamarg','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
- const u=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));const l=document.createElement('a');l.href=u;l.download='icchamarg-reminder.ics';l.click();setTimeout(()=>URL.revokeObjectURL(u),1000);toast('Open the file to add the reminder to your calendar.')}
+ const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Krupamarg//EN','BEGIN:VEVENT','UID:krupamarg-'+Date.now()+'@krupamarg','DTSTAMP:'+d+'T000000Z',
+  'DTSTART;TZID=Asia/Kolkata:'+d+'T'+h+m+'00','DURATION:PT15M','RRULE:FREQ=DAILY;UNTIL='+end+'T235959Z','SUMMARY:Krupamarg · today\'s puja and jap',
+  'DESCRIPTION:Open Krupamarg for today\'s devotion: '+location.origin+location.pathname,'BEGIN:VALARM','TRIGGER:PT0M','ACTION:DISPLAY','DESCRIPTION:Krupamarg','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+ const u=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));const l=document.createElement('a');l.href=u;l.download='krupamarg-reminder.ics';l.click();setTimeout(()=>URL.revokeObjectURL(u),1000);toast('Open the file to add the reminder to your calendar.')}
 document.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
   if(f.id==='regForm'){readReg();if(S.regStep===0&&!S.user.name.trim()){toast('Enter your name.');return}
   if(S.regStep===3){if(!S.user.wishText.trim()){toast('Write your sankalp in a few words.');return}if(!S.user.consent){toast('Please tick the box to continue.');return}planCache=null;go(S.paid?'sankalpTab':'sites');return}

@@ -1,6 +1,6 @@
-# Icchamarg · इच्छामार्ग
+# Krupamarg · कृपामार्ग
 
-*The path of your wish.* Register your sankalp, choose sacred sites, and follow a devotional plan of puja, vrat, jap and daan until your deadline — with live panchang, planet positions and a mantra counter.
+*The path of grace.* Register your sankalp, choose sacred sites, and follow a devotional plan of puja, vrat, jap and daan until your deadline — with live panchang, planet positions and a mantra counter.
 
 Works in any browser and installs like an app on Android, iPhone and desktop.
 
