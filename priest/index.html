@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Krupamarg Priest · कृपामार्ग पुजारी</title>
+<meta name="description" content="For temple priests: today's sankalps, read-aloud mode, devotee details, proofs and calendar.">
+<meta name="theme-color" content="#FBF7F0">
+<meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Krupamarg Priest">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap">
+<style>
+/* ===== Krupamarg design system · peach & cream =====
+   Tokens first; every component below reads only from these. */
+:root{
+  /* surfaces — warm cream, as in the reference */
+  --page:#F7F2EA; --bg:#FBF7F0; --bg2:#F4EEE4; --surface:#FFFDF9; --sunk:#F3EEE6; --peach:#E6D7C3; --peach-soft:#F5ECDD;
+  /* ink — deep navy */
+  --fg:#1F3557; --muted:#5F6F84; --line:#E7E0D4;
+  /* brand — navy, dusk blue, temple gold */
+  --navy:#23406A; --terracotta:#C9A15A; --accent:#24426B; --onaccent:#FFFFFF; --gold:#C9A15A; --gold-ink:#8C6A2B; --mandala:#C9A15A;
+  --sky:#E4EBF2; --sky-ink:#2E4A6E;
+  /* status */
+  --ok:#3F6B54; --okbg:#E6F0EA; --warn:#8A5E22; --warnbg:#FBEFDD; --err:#A2483F; --errbg:#F9E5E2;
+  /* type */
+  --display:'Lora', 'Noto Serif Devanagari', Georgia, serif;
+  --body:'Manrope', 'Noto Sans Devanagari', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* shape & depth */
+  --r:18px; --r-sm:12px; --r-pill:999px;
+  --shadow:0 1px 2px rgba(31,53,87,.04), 0 6px 20px rgba(31,53,87,.06);
+  --shadow-lg:0 14px 44px rgba(31,53,87,.14);
+  --hero-grad:linear-gradient(115deg,#34557D 0%,#46698F 45%,#6E8FAE 78%,#B8B2A2 100%);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none}
+body{background:var(--page);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
+
+/* ----- shell: fixed app bar + scrolling content + fixed tab bar ----- */
+.shell{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+@media (min-width:600px){.shell{inset:auto;top:24px;bottom:24px;left:50%;transform:translateX(-50%);width:440px;border-radius:28px;border:1px solid var(--line);box-shadow:var(--shadow-lg)}}
+.appbar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;background:color-mix(in srgb, var(--bg) 92%, transparent);border-bottom:1px solid var(--line);
+  padding:calc(10px + env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) 10px max(16px, env(safe-area-inset-left,0px));min-height:60px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:23px;letter-spacing:-.01em;color:var(--navy);user-select:none}
+.brand i,.mark{border-radius:50%;background:radial-gradient(circle at 35% 30%,#3A5D88,#1F3A60 75%);color:#E9C77E;display:grid;place-items:center;font-style:normal;font-family:var(--display);flex:none;box-shadow:inset 0 0 0 1.5px rgba(201,161,90,.45), 0 4px 12px rgba(31,53,87,.18)}
+.brand i{width:34px;height:34px;font-size:17px}
+.mark{width:56px;height:56px;font-size:28px}
+.app{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  padding:18px max(16px, env(safe-area-inset-right,0px)) 32px max(16px, env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:16px}
+.mandala{position:fixed;right:-140px;bottom:-140px;width:460px;max-width:none;height:460px;color:var(--mandala);opacity:.18;z-index:0;pointer-events:none}
+.mandala.tl{right:auto;bottom:auto;left:-170px;top:-170px;width:380px;height:380px;opacity:.12}
+
+/* ----- type ----- */
+h1,h2,h3{margin:0;text-wrap:balance;color:var(--fg)}
+h1{font-family:var(--display);font-weight:600;font-size:28px;line-height:1.18;letter-spacing:-.01em}
+h2{font-family:var(--display);font-weight:600;font-size:21px;line-height:1.25}
+h3{font-size:17px;font-weight:700;line-height:1.3}
+p{margin:0}
+.muted{color:var(--muted)} .small{font-size:14px} .tiny{font-size:12.5px;line-height:1.45}
+.eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.dev{font-family:'Noto Sans Devanagari',var(--body)}
+
+/* ----- layout helpers ----- */
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+
+/* ----- cards ----- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0;box-shadow:var(--shadow)}
+.card.row{flex-direction:row}
+button.card{text-align:left;font-weight:400;transition:transform .12s ease, box-shadow .12s ease}
+button.card:active{transform:scale(.985)}
+.card-head{display:flex;align-items:center;gap:12px}
+.card-head h3{flex:1}
+.ico{width:42px;height:42px;border-radius:50%;background:var(--peach-soft);color:var(--gold-ink);display:grid;place-items:center;flex:none}
+.ico svg{width:22px;height:22px}
+.tile{gap:6px;min-height:118px;justify-content:space-between}
+.tile .ico{width:36px;height:36px} .tile .ico svg{width:20px;height:20px}
+.tile strong{font-size:17px;color:var(--fg);line-height:1.25}
+.tile .big{font-family:var(--display);font-size:24px;color:var(--navy)}
+
+/* hero (sankalp countdown) — peach gradient with sunrise-and-temple art */
+.hero{position:relative;overflow:hidden;background:var(--hero-grad);color:#F6F2EA;border-radius:22px;padding:20px 18px 18px;display:flex;flex-direction:column;gap:8px;border:none;box-shadow:0 10px 28px rgba(31,53,87,.22)}
+.hero>*{position:relative;z-index:1}
+.hero h1,.hero h2,.hero h3{color:#FFF9EE}
+.hero .art{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.hero .muted{color:#E3E9F0}
+.hero .eyebrow{color:#F2D58E;text-shadow:0 1px 2px rgba(20,35,60,.3)}
+.hero .count{color:#F2D58E;background:linear-gradient(180deg,#F7E2A8,#E2B866);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:none}
+.count{font-family:var(--display);font-weight:600;font-size:56px;line-height:1;color:var(--accent);letter-spacing:-.02em}
+.hero .bar{background:rgba(255,255,255,.28);height:8px}
+.hero .bar b{background:linear-gradient(90deg,#F7E2A8,#E2B866);min-width:8px}
+
+/* welcome hero */
+.ganesh-hero{position:relative;overflow:hidden;background:var(--hero-grad);border:none;color:#F6F2EA;border-radius:24px;padding:22px 16px 18px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;box-shadow:var(--shadow)}
+.ganesh-hero>*{position:relative;z-index:1}
+.ganesh-hero>.art{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.ganesh-hero h1{font-size:34px;color:#FFF9EE;text-shadow:0 1px 3px rgba(20,35,60,.35)}
+.ganesh-hero .tag{color:#F2D58E;font-weight:600}
+.ganesh{width:140px;height:auto;color:#E9C77E;align-self:center}
+
+/* ----- buttons & controls ----- */
+button,.btn{font:inherit;cursor:pointer;border-radius:14px;min-height:48px;padding:0 18px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font-weight:700;font-size:15.5px;transition:background .15s, border-color .15s, transform .1s}
+button:active,.btn:active{transform:scale(.98)}
+@media (hover:hover){button:hover,.btn:hover{border-color:#C9D5E2} .btn-primary:hover{background:#1A3355;border-color:#1A3355}}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent);box-shadow:0 4px 14px rgba(36,66,107,.22)}
+.btn-ghost{background:transparent;border:none;color:var(--gold-ink);min-height:40px;padding:0;font-weight:700;align-self:flex-start;box-shadow:none}
+.btn-block{width:100%}
+.music{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:40px;border-radius:var(--r-pill);background:var(--surface);color:var(--fg);border:1px solid var(--line);padding:0 14px;font-size:14px;font-weight:600;box-shadow:var(--shadow)}
+.music{background:#EEF3F9;border-color:#D8E2EE;color:var(--navy)}
+.music svg{width:16px;height:16px;color:var(--navy)}
+.music[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.music[aria-pressed="true"] svg{color:#E9C77E}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid color-mix(in srgb, var(--gold) 70%, transparent);outline-offset:2px}
+button[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
+label.field{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700}
+label.field span.opt{font-weight:500;color:var(--muted)}
+input,select,textarea{font:inherit;font-weight:500;font-size:16px;min-height:48px;border:1.5px solid var(--line);border-radius:var(--r-sm);padding:10px 14px;background:var(--surface);color:var(--fg);width:100%;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--navy)}
+input::placeholder,textarea::placeholder{color:#97A2B1}
+textarea{min-height:84px;resize:vertical}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14.5px}
+.check input{width:22px;height:22px;min-height:0;flex:none;margin-top:1px;accent-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:40px;border-radius:var(--r-pill);padding:0 16px;font-weight:600;font-size:14.5px}
+.chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.pill{display:inline-flex;align-items:center;border-radius:var(--r-pill);padding:3px 11px;font-size:12.5px;font-weight:700;background:var(--sky);color:var(--sky-ink);white-space:nowrap}
+.pill.ok{background:var(--okbg);color:var(--ok)} .pill.warn{background:var(--warnbg);color:var(--warn)}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.steps i{height:6px;border-radius:9px;background:var(--line);display:block}
+.steps i.on{background:var(--navy)}
+.select-card{text-align:left;display:flex;gap:12px;align-items:flex-start;padding:16px;min-height:0;font-weight:400}
+.select-card[aria-pressed="true"]{border:2px solid var(--navy);background:#F5F8FC}
+.tick{width:24px;height:24px;border-radius:8px;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:14px;color:var(--onaccent)}
+[aria-pressed="true"] .tick{background:var(--accent);border-color:var(--accent)}
+.avatar{width:46px;height:46px;border-radius:50%;background:var(--sky);display:grid;place-items:center;font-weight:700;color:var(--accent);flex:none}
+.bar{height:8px;border-radius:9px;background:var(--sunk);overflow:hidden}
+.bar b{display:block;height:100%;background:var(--navy);border-radius:9px}
+
+/* devotion checklist */
+.todo{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.todo:last-child{border-bottom:none;padding-bottom:2px}
+.todo input{appearance:none;-webkit-appearance:none;width:24px;height:24px;min-height:0;flex:none;margin:0;border:1.8px solid #8396AE;border-radius:7px;background:var(--surface);display:grid;place-items:center;padding:0;cursor:pointer}
+.todo input:checked{background:var(--ok);border-color:var(--ok)}
+.todo input:checked::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.4px 2.4px 0;transform:translateY(-1px) rotate(45deg)}
+.todo .when{font-size:12.5px;color:var(--muted)}
+.done-text{text-decoration:line-through;color:var(--muted)}
+.kind{flex:none;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:var(--r-pill);padding:3px 9px;background:var(--sunk);color:var(--muted);margin-top:1px}
+.kind{background:var(--sky);color:var(--sky-ink)} .k-Vrat{background:#FBEFDD;color:#8A5E22} .k-Pooja{background:#F3E7D3;color:#7A5A22} .k-Daan{background:var(--okbg);color:var(--ok)} .k-Jap{background:#F5ECDD;color:#7A5A22} .k-Puja,.k-Prayer{background:var(--sky);color:var(--sky-ink)}
+.day-head{margin-top:12px;font-size:13px;font-weight:800;color:var(--navy);border-bottom:1px solid var(--line);padding-bottom:6px}
+
+/* panchang summary grid with divider */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 0;width:100%}
+.pgrid>span{padding:0 14px}
+.pgrid>span:nth-child(odd){padding-left:0;border-right:1px solid var(--line)}
+.pgrid .k{display:block;font-size:13px;color:var(--muted)} .pgrid strong{font-size:15.5px}
+
+/* ----- tab bar ----- */
+.tabs{flex:none;background:var(--surface);border-top:1px solid var(--line);user-select:none;box-shadow:0 -6px 20px rgba(31,53,87,.06);border-radius:22px 22px 0 0;
+  padding:6px max(8px, env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(8px, env(safe-area-inset-left,0px));z-index:5}
+.tabs[hidden]{display:none}
+.tabs .in{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}
+.tabs button{border:none;background:transparent;box-shadow:none;min-height:56px;padding:4px 0 2px;font-size:12.5px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:14px}
+.tabs button{position:relative}
+.tabs button span.ti{width:52px;height:30px;border-radius:var(--r-pill);display:grid;place-items:center;transition:background .2s}
+.tabs svg{width:22px;height:22px}
+.tabs button[aria-current="page"]{color:var(--navy);font-weight:800}
+.tabs button[aria-current="page"] svg{fill:color-mix(in srgb, var(--navy) 16%, transparent)}
+.tabs button[aria-current="page"]::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:3px;background:var(--gold)}
+
+/* ----- feature pieces ----- */
+.mantra{width:min(250px,68vw);aspect-ratio:1;max-width:100%;border-radius:50%;border:none;background:radial-gradient(circle at 35% 30%,#4E7299,#23406A 75%);box-shadow:0 0 0 10px #FFF, 0 0 0 12px var(--gold), var(--shadow-lg);color:#F2D58E;display:flex;flex-direction:column;align-items:center;justify-content:center;align-self:center;margin:12px 0}
+.mantra .n{font-family:var(--display);font-size:72px;font-weight:600;line-height:1}
+.mantra span:last-child{color:#E3E9F0;font-weight:600}
+.video{height:150px;border-radius:var(--r-sm);background:var(--hero-grad);color:#F6F2EA;display:grid;place-items:center;font-size:13.5px;font-weight:600;border:none}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:14.5px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:700;min-width:0;overflow-wrap:anywhere}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));background:var(--fg);color:#FFF8F1;padding:11px 18px;border-radius:14px;font-size:14px;font-weight:600;z-index:9;max-width:90vw;box-shadow:var(--shadow-lg)}
+.demo{font-size:13px;background:var(--warnbg);color:var(--warn);border-radius:14px;padding:8px 8px 8px 14px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-weight:600}
+.demo button{min-height:34px;font-size:13px;padding:0 12px;box-shadow:none}
+.notice{background:var(--sunk);border-radius:var(--r-sm);padding:12px 14px;font-size:13.5px;color:var(--muted)}
+@media (prefers-reduced-motion: no-preference){.screen.enter{animation:in .24s ease-out}@keyframes in{from{opacity:.5;transform:translateY(8px)}to{opacity:1;transform:none}}}
+
+/* jyotish wheel */
+.wheel-wrap{max-width:320px;width:100%;align-self:center}
+.wheel{width:100%;height:auto;display:block}
+.w-ring{fill:none;stroke:var(--line);stroke-width:1.2} .w-line{stroke:var(--line);stroke-width:1}
+.w-you{fill:color-mix(in srgb, var(--gold) 22%, transparent);stroke:var(--gold);stroke-width:1.5}
+.w-sign{font:700 10px var(--body);fill:var(--muted);text-anchor:middle}
+.w-pl{fill:var(--surface);stroke:var(--navy);stroke-width:1.4} .w-pl.Sa,.w-pl.Ra,.w-pl.Ke{stroke:#8C6A2B} .w-pl.Ju,.w-pl.Ve{stroke:var(--ok)}
+.w-pt{font:800 9px var(--body);fill:var(--fg);text-anchor:middle}
+.w-c{font:600 14px var(--display);fill:var(--navy);text-anchor:middle} .w-c2{font:600 10px var(--body);fill:var(--muted);text-anchor:middle}
+.planet{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)} .planet:last-child{border-bottom:none}
+.w-dot{width:32px;height:32px;border-radius:50%;background:var(--sky);color:var(--navy);display:grid;place-items:center;font-size:11px;font-weight:800;flex:none}
+.dosha{display:flex;flex-direction:column;gap:4px;padding:12px 0;border-bottom:1px solid var(--line)} .dosha:last-of-type{border-bottom:none}
+.list-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)} .list-row:last-child{border-bottom:none}
+</style>
+<style>
+/* ===== priest app additions ===== */
+.appbar .sub{font-size:11.5px;font-weight:800;color:var(--gold-ink);font-family:var(--body);letter-spacing:.06em;display:block;line-height:1.2}
+.appbar .sub span{color:var(--muted);letter-spacing:0;font-weight:700}
+.appbar .sub span:not(:empty)::before{content:"· "}
+.appbar .brand{line-height:1.1}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--sunk);border-radius:var(--r-pill);padding:4px;gap:4px}
+.seg button{border:none;border-radius:var(--r-pill);min-height:42px;background:transparent;box-shadow:none;color:var(--muted)}
+.seg button.on{background:var(--surface);color:var(--navy);box-shadow:var(--shadow)}
+.drow{flex-direction:row;align-items:center;gap:12px;padding:12px 14px;min-height:74px}
+.drow-main{display:flex;flex-direction:column;min-width:0;flex:1}
+.drow-main strong{font-size:16.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drow-end{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:none}
+.okdot{width:26px;height:26px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center}
+.okdot svg{width:16px;height:16px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actions>.btn-primary{grid-column:1/-1;min-height:58px;font-size:17px}
+.actions svg,.btn-gold svg,button svg{width:20px;height:20px;flex:none}
+.act,.actions .btn,.actions button,.stack>button{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-weight:700;font-size:15px}
+a.btn{color:var(--fg);border-radius:14px;min-height:48px;border:1.5px solid var(--line);background:var(--surface);padding:0 14px}
+label.btn{cursor:pointer;border-radius:14px;min-height:48px;border:1.5px solid var(--line);background:var(--surface);padding:0 14px}
+.btn-gold{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,#F7E2A8,#E2B866);color:#2A2414;border:none;font-weight:800;min-height:52px;border-radius:14px;padding:0 20px;box-shadow:0 6px 18px rgba(20,35,60,.25);align-self:flex-start;margin-top:6px}
+.btn-gold[disabled]{opacity:.55}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:2px;box-shadow:var(--shadow)}
+.card .stat{box-shadow:none;background:var(--bg)}
+.stat b{font-family:var(--display);font-size:24px;color:var(--navy);line-height:1.1}
+.stat span{font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.3}
+.searchbox{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:0 12px}
+.searchbox svg{width:20px;height:20px;color:var(--muted);flex:none}
+.searchbox input{border:none;padding-left:0;min-height:50px}
+.searchbox input:focus{outline:none}
+.searchbox:focus-within{border-color:var(--navy)}
+.linkrow{width:100%;border:none;border-bottom:1px solid var(--line);border-radius:0;background:transparent;box-shadow:none;min-height:48px;padding:8px 0;font-weight:600;text-align:left}
+.thumb{display:block;width:100%;max-width:260px;border-radius:10px;margin:2px 0 6px}
+#readerHost{position:fixed;inset:0;z-index:20}
+#readerHost[hidden]{display:none}
+.reader{position:absolute;inset:0;background:var(--hero-grad);color:#FFF9EE;display:flex;flex-direction:column;padding:calc(18px + env(safe-area-inset-top,0px)) 20px calc(18px + env(safe-area-inset-bottom,0px))}
+.rclose{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:14px;width:48px;height:48px;border-radius:50%;padding:0;display:grid;place-items:center;background:rgba(255,255,255,.16);border:none;color:#fff;box-shadow:none}
+.rclose svg{width:24px;height:24px}
+.rcount{font-weight:800;letter-spacing:.08em;color:#F2D58E;margin:6px 0 0}
+.rbody{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;max-width:640px;width:100%;margin:0 auto}
+.rname{font-family:var(--display);font-size:clamp(34px,9vw,58px);line-height:1.1;font-weight:700;margin:0;color:#FFF9EE}
+.rfam{font-size:clamp(20px,5vw,28px);font-weight:600;color:#E3E9F0;margin:0}
+.rmeta{font-size:clamp(18px,4.6vw,24px);color:#F2D58E;font-weight:700;margin:0;line-height:1.5}
+.rwish{font-size:clamp(18px,4.6vw,24px);margin:0;line-height:1.45}
+.rwish span{display:block;font-size:14px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#E3E9F0;margin-bottom:4px}
+.rnav{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:10px;max-width:640px;width:100%;margin:0 auto}
+.rnav button{min-height:60px;font-size:16px;background:rgba(255,255,255,.16);border:none;color:#fff;box-shadow:none}
+.rnav .btn-gold{background:linear-gradient(180deg,#F7E2A8,#E2B866);color:#2A2414;font-size:18px;margin:0;align-self:stretch}
+dialog{border:none;border-radius:22px;padding:20px;width:min(92vw,420px);background:var(--surface);color:var(--fg);box-shadow:var(--shadow-lg)}
+dialog::backdrop{background:rgba(20,35,60,.45)}
+code{font-size:13px;background:var(--sunk);padding:1px 6px;border-radius:6px}
+#print{display:none}
+@media print{
+ html,body{overflow:visible;height:auto;background:#fff}
+ .shell,.mandala,.toast,#readerHost{display:none!important}
+ #print{display:block;font-family:var(--body);color:#000}
+ #print h1{font-size:20px;margin:0 0 10px}
+ #print table{width:100%;border-collapse:collapse;font-size:13px}
+ #print th,#print td{border:1px solid #999;padding:6px;text-align:left;vertical-align:top}
+}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+ <g id="ganeshArt">
+  <circle cx="100" cy="10" r="5"/><path d="M72 60 L82 32 L100 16 L118 32 L128 60"/><path d="M68 62 Q100 50 132 62"/><path d="M86 44 Q100 38 114 44"/>
+  <path d="M70 68 C42 56 30 98 46 118 C54 128 68 124 72 110"/><path d="M130 68 C158 56 170 98 154 118 C146 128 132 124 128 110"/>
+  <path d="M72 64 Q70 96 80 112 M128 64 Q130 96 120 112"/>
+  <path d="M84 90 Q88 85 92 90 M108 90 Q112 85 116 90"/><path d="M100 70 V80"/><circle cx="100" cy="84" r="1.6"/>
+  <path d="M106 104 C112 130 94 148 102 162 C108 172 124 168 120 156"/><path d="M94 104 C92 120 92 132 96 146"/><path d="M90 114 L82 126"/>
+  <path d="M80 112 Q100 122 120 112"/>
+  <ellipse cx="100" cy="190" rx="40" ry="30"/><path d="M84 190 Q100 202 116 190"/>
+  <path d="M62 168 Q52 182 60 196"/><circle cx="54" cy="200" r="9"/><path d="M48 196 Q54 186 60 196"/>
+  <path d="M138 168 Q152 160 150 142"/><path d="M144 140 L150 130 L156 140"/>
+  <ellipse cx="160" cy="214" rx="12" ry="7"/><circle cx="168" cy="208" r="3"/><path d="M148 214 Q140 216 136 210"/>
+ </g></defs></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><g id="mandalaArt" fill="none" stroke="currentColor" stroke-width="1.6">
+ <circle cx="200" cy="200" r="190"/><circle cx="200" cy="200" r="150"/><circle cx="200" cy="200" r="60"/><circle cx="200" cy="200" r="24"/>
+ <g id="mpetal"><path d="M200 140 C185 110 185 80 200 50 C215 80 215 110 200 140 Z"/><path d="M200 50 C190 30 200 14 200 10 C200 14 210 30 200 50"/><circle cx="200" cy="168" r="4"/></g>
+ <use href="#mpetal" transform="rotate(30 200 200)"/><use href="#mpetal" transform="rotate(60 200 200)"/><use href="#mpetal" transform="rotate(90 200 200)"/><use href="#mpetal" transform="rotate(120 200 200)"/><use href="#mpetal" transform="rotate(150 200 200)"/><use href="#mpetal" transform="rotate(180 200 200)"/><use href="#mpetal" transform="rotate(210 200 200)"/><use href="#mpetal" transform="rotate(240 200 200)"/><use href="#mpetal" transform="rotate(270 200 200)"/><use href="#mpetal" transform="rotate(300 200 200)"/><use href="#mpetal" transform="rotate(330 200 200)"/>
+</g></defs></svg>
+<svg class="mandala" viewBox="0 0 400 400" aria-hidden="true"><use href="#mandalaArt"/></svg>
+<svg class="mandala tl" viewBox="0 0 400 400" aria-hidden="true"><use href="#mandalaArt"/></svg>
+<div class="shell">
+ <header class="appbar"><span class="brand"><i aria-hidden="true">कृ</i><span>krupamarg<span class="sub">PRIEST <span id="templeName"></span></span></span></span></header>
+ <main class="app" id="app" aria-live="polite"></main>
+ <nav class="tabs" id="tabs" hidden aria-label="Main"><div class="in" id="tabsIn" style="grid-template-columns:repeat(4,minmax(0,1fr))"></div></nav>
+</div>
+<div id="readerHost" hidden></div>
+<dialog id="dlg"></dialog>
+<div class="toast" id="toast" hidden></div>
+<div id="print"></div>
+<script src="../firebase-config.js"></script>
+<script type="module" src="cloud.js"></script>
+<script>
+/* shared with the devotee app: temples, wishes, cities and the panchang model */
+const WISHES=[['exam','Exam','परीक्षा'],['job','Job','नोकरी'],['marriage','Marriage','विवाह'],['family','Family','कुटुंब'],['health','Health','आरोग्य'],['business','Business','व्यवसाय'],['home','New home','नवीन घर'],['travel','Travel','प्रवास']];
+const WISH_DAILY={exam:'Saraswati vandana before study',job:'Hanuman Chalisa',marriage:'Gauri–Shankar prayer',family:'Evening aarti with the family',health:'Mahamrityunjaya jap × 11, alongside your doctor’s treatment',business:'Lakshmi aarti at opening time',home:'Ganesh vandana',travel:'Hanuman Chalisa'};
+const WEEK=['Surya arghya at sunrise','Shiva abhishek with milk and bel patra','Hanuman puja · sindoor and Chalisa','Ganesh archana with durva','Guru puja · donate chana dal or yellow cloth','Devi puja · offer white sweets','Til-oil diya for Shani · Hanuman Chalisa'];
+const DAAN=['Annadan · feed people in need','Vastra daan · donate clothes','Dhan daan · dakshina to the temple or the needy','Gau seva · feed a cow'];
+const VRAT={exam:'Ganesh vandana before study each day; many students keep the Sankashti Chaturthi vrat.',job:'Somvar vrat (Monday Shiva puja) and daily Hanuman Chalisa.',marriage:'The 16 Mondays vrat (Solah Somvar).',family:'Satyanarayan katha on Purnima with the whole family.',health:'Mahamrityunjaya mantra × 108 daily, alongside your doctor’s treatment.',business:'Lakshmi–Ganesh puja on Fridays.',home:'Vastu puja and griha pravesh on an auspicious muhurat.',travel:'Hanuman Chalisa before setting out.'};
+const SITES=[
+ {id:'grish',name:'Grishneshwar Jyotirlinga',place:'Verul, Chh. Sambhajinagar',deity:'Shiva',type:'Jyotirlinga',mantra:'ॐ नमः शिवाय',services:'Rudrabhishek · Laghurudra · Daily sankalp',good:['job','marriage','health','family'],aarti:'4:00 AM · 8:00 PM'},
+ {id:'trimb',name:'Trimbakeshwar Jyotirlinga',place:'Trimbak, Nashik',deity:'Shiva',type:'Jyotirlinga',mantra:'ॐ नमः शिवाय',services:'Rudrabhishek · Mahamrityunjaya jap',good:['health','family','job'],aarti:'5:30 AM · 7:00 PM'},
+ {id:'siddhi',name:'Siddhivinayak Temple',place:'Prabhadevi, Mumbai',deity:'Ganesh',type:'Ganesh mandir',mantra:'ॐ गं गणपतये नमः',services:'Archana · Modak naivedya · Sankashti puja',good:['exam','business','home'],aarti:'5:30 AM · 8:30 PM'},
+ {id:'somnath',name:'Somnath Jyotirlinga',place:'Prabhas Patan, Gujarat',deity:'Shiva',type:'Jyotirlinga',mantra:'ॐ नमः शिवाय',services:'Rudrabhishek · Bilva puja',good:['job','business','travel'],aarti:'7:00 AM · 7:00 PM'},
+ {id:'ambaji',name:'Ambaji Shaktipeeth',place:'Banaskantha, Gujarat',deity:'Devi',type:'Shaktipeeth',mantra:'ॐ ऐं ह्रीं क्लीं चामुण्डायै विच्चे',services:'Chunari offering · Navratri sankalp',good:['marriage','family','home'],aarti:'7:30 AM · 6:30 PM'},
+ {id:'tulja',name:'Tuljabhavani Temple',place:'Tuljapur, Dharashiv',deity:'Devi',type:'Shaktipeeth',mantra:'ॐ तुळजाभवान्यै नमः',services:'Abhishek · Gondhal · Sankalp',good:['family','health','exam'],aarti:'5:00 AM · 9:00 PM'}];
+const CITIES={'Pune':[18.52,73.86],'Mumbai':[19.08,72.88],'Chh. Sambhajinagar':[19.88,75.34],'Nashik':[20.0,73.79],'Nagpur':[21.15,79.09],'Ahmedabad':[23.02,72.57],'Gandhinagar':[23.22,72.65],'Surat':[21.17,72.83],'Delhi':[28.61,77.21],'Bengaluru':[12.97,77.59]};
+
+
+/* ---------- astronomy (low-precision Keplerian model, Lahiri ayanamsa; accurate to about a degree) ---------- */
+const D2R=Math.PI/180,R2D=180/Math.PI,rev=x=>((x%360)+360)%360,sn=x=>Math.sin(x*D2R),cs=x=>Math.cos(x*D2R);
+const dayNum=dt=>dt.getTime()/86400000+2440587.5-2451543.5;
+const ayan=d=>23.853+(d/365.25)*0.013968;
+function kepler(M,e){let E=M+e*R2D*sn(M)*(1+e*cs(M));for(let i=0;i<6;i++)E=E-(E-e*R2D*sn(E)-M)/(1-e*cs(E));return E}
+const EL={Me:d=>[48.3313+3.24587e-5*d,7.0047+5e-8*d,29.1241+1.01444e-5*d,0.387098,0.205635+5.59e-10*d,168.6562+4.0923344368*d],
+ Ve:d=>[76.6799+2.4659e-5*d,3.3946+2.75e-8*d,54.891+1.38374e-5*d,0.72333,0.006773-1.302e-9*d,48.0052+1.6021302244*d],
+ Ma:d=>[49.5574+2.11081e-5*d,1.8497-1.78e-8*d,286.5016+2.92961e-5*d,1.523688,0.093405+2.516e-9*d,18.6021+0.5240207766*d],
+ Ju:d=>[100.4542+2.76854e-5*d,1.303-1.557e-7*d,273.8777+1.64505e-5*d,5.20256,0.048498+4.469e-9*d,19.895+0.0830853001*d],
+ Sa:d=>[113.6634+2.3898e-5*d,2.4886-1.081e-7*d,339.3939+2.97661e-5*d,9.55475,0.055546-9.499e-9*d,316.967+0.0334442282*d]};
+function sunPos(d){const w=282.9404+4.70935e-5*d,e=0.016709-1.151e-9*d,M=rev(356.047+0.9856002585*d),E=kepler(M,e),xv=cs(E)-e,yv=Math.sqrt(1-e*e)*sn(E);return{lon:rev(Math.atan2(yv,xv)*R2D+w),r:Math.hypot(xv,yv),M,w}}
+function helio(N,i,w,a,e,M){const E=kepler(M,e),xv=a*(cs(E)-e),yv=a*Math.sqrt(1-e*e)*sn(E),v=Math.atan2(yv,xv)*R2D,r=Math.hypot(xv,yv);
+ return[r*(cs(N)*cs(v+w)-sn(N)*sn(v+w)*cs(i)),r*(sn(N)*cs(v+w)+cs(N)*sn(v+w)*cs(i))]}
+function moonPos(d){const N=125.1228-0.0529538083*d,w=318.0634+0.1643573223*d,M=rev(115.3654+13.0649929509*d);const [x,y]=helio(N,5.1454,w,60.2666,0.0549,M);
+ const s=sunPos(d),Ms=s.M,Mm=M,D=(M+w+N)-(Ms+s.w),F=(M+w+N)-N;
+ const lon=Math.atan2(y,x)*R2D-1.274*sn(Mm-2*D)+0.658*sn(2*D)-0.186*sn(Ms)-0.059*sn(2*Mm-2*D)-0.057*sn(Mm-2*D+Ms)+0.053*sn(Mm+2*D)+0.046*sn(2*D-Ms)+0.041*sn(Mm-Ms)-0.035*sn(D)-0.031*sn(Mm+Ms)-0.015*sn(2*F-2*D)+0.011*sn(Mm-4*D);
+ return{lon:rev(lon),node:rev(N)}}
+function planetLon(k,d){const [N,i,w,a,e,M]=EL[k](d);const [xh,yh]=helio(N,i,w,a,e,rev(M));const s=sunPos(d);return rev(Math.atan2(yh+s.r*sn(s.lon),xh+s.r*cs(s.lon))*R2D)}
+function sidereal(dt){const d=dayNum(dt),A=ayan(d),m=moonPos(d),t={Su:sunPos(d).lon,Mo:m.lon,Ma:planetLon('Ma',d),Me:planetLon('Me',d),Ju:planetLon('Ju',d),Ve:planetLon('Ve',d),Sa:planetLon('Sa',d),Ra:m.node,Ke:rev(m.node+180)};
+ const o={};for(const k in t)o[k]=rev(t[k]-A);o._elong=rev(t.Mo-t.Su);return o}
+const RASHI=['Mesha','Vrishabha','Mithuna','Karka','Simha','Kanya','Tula','Vrishchika','Dhanu','Makara','Kumbha','Meena'];
+const RASHI_S=['Mesh','Vrish','Mith','Kark','Simh','Kany','Tula','Vrsc','Dhan','Makr','Kumb','Meen'];
+const NAK=['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+const YOGA=['Vishkambha','Priti','Ayushman','Saubhagya','Shobhana','Atiganda','Sukarma','Dhriti','Shula','Ganda','Vriddhi','Dhruva','Vyaghata','Harshana','Vajra','Siddhi','Vyatipata','Variyana','Parigha','Shiva','Siddha','Sadhya','Shubha','Shukla','Brahma','Indra','Vaidhriti'];
+const TITHI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Saptami','Ashtami','Navami','Dashami','Ekadashi','Dwadashi','Trayodashi','Chaturdashi'];
+const KAR=['Bava','Balava','Kaulava','Taitila','Garaja','Vanija','Vishti'];
+const VARA=['Ravivar','Somvar','Mangalvar','Budhvar','Guruvar','Shukravar','Shanivar'];
+const PL={Su:['Surya','Sun'],Mo:['Chandra','Moon'],Ma:['Mangal','Mars'],Me:['Budh','Mercury'],Ju:['Guru','Jupiter'],Ve:['Shukra','Venus'],Sa:['Shani','Saturn'],Ra:['Rahu','Rahu'],Ke:['Ketu','Ketu']};
+const GOOD={Su:[3,6,10,11],Mo:[1,3,6,7,10,11],Ma:[3,6,11],Me:[2,4,6,8,10,11],Ju:[2,5,7,9,11],Ve:[1,2,3,4,5,8,9,11,12],Sa:[3,6,11],Ra:[3,6,11],Ke:[3,6,11]};
+const CARE={Su:'Surya arghya on Sundays',Mo:'Shiva abhishek with milk on Mondays',Ma:'Hanuman puja on Tuesdays',Me:'Ganesh archana with durva on Wednesdays',Ju:'Guru puja and chana dal daan on Thursdays',Ve:'Devi puja and white sweets on Fridays',Sa:'Hanuman Chalisa and til-oil diya on Saturdays',Ra:'Durga puja; avoid new starts in Rahu kaal',Ke:'Ganesh puja and dog seva'};
+const tithiNum=el=>Math.floor(el/12)+1;
+function tithiName(t){if(t===15)return'Shukla Purnima';if(t===30)return'Krishna Amavasya';return(t<=15?'Shukla ':'Krishna ')+TITHI[(t-1)%15]}
+function karana(el){const k=Math.floor(el/6);if(k===0)return'Kimstughna';if(k>=57)return['Shakuni','Chatushpada','Naga'][k-57];return KAR[(k-1)%7]}
+function sunTimes(day,lat,lon){const start=new Date(day.getFullYear(),0,0),n=Math.round((day-start)/86400000),B=360/365*(n-81);
+ const eot=9.87*sn(2*B)-7.53*cs(B)-1.5*sn(B),dec=23.44*sn(B);const h=Math.acos((sn(-0.833)-sn(lat)*sn(dec))/(cs(lat)*cs(dec)))*R2D;
+ const noon=720+(82.5-lon)*4-eot;return{rise:noon-h*4,set:noon+h*4}}
+const hm=m=>{m=Math.round(m);let h=Math.floor(m/60),mi=m%60,ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+String(mi).padStart(2,'0')+' '+ap};
+const atIST=(day,min)=>new Date(Date.UTC(day.getFullYear(),day.getMonth(),day.getDate())+(min-330)*60000);
+function panchang(day){const [lat,lon]=CITIES[S.user.city]||CITIES['Pune'];const st=sunTimes(day,lat,lon);const p=sidereal(atIST(day,st.rise));
+ const t=tithiNum(p._elong),seg=(st.set-st.rise)/8,rk=[8,2,7,5,6,4,3][day.getDay()]-1;
+ return{t,tithi:tithiName(t),nak:NAK[Math.floor(p.Mo/(360/27))],yoga:YOGA[Math.floor(rev(p.Su+p.Mo)/(360/27))],karana:karana(p._elong),vara:VARA[day.getDay()],
+  rise:hm(st.rise),set:hm(st.set),rahu:hm(st.rise+rk*seg)+' – '+hm(st.rise+(rk+1)*seg),moonRashi:RASHI[Math.floor(p.Mo/30)]}}
+function specialDay(t){return{11:'Ekadashi',26:'Ekadashi',13:'Pradosh',28:'Pradosh',19:'Sankashti Chaturthi',4:'Vinayaki Chaturthi',15:'Purnima',30:'Amavasya'}[t]}
+
+const HERO_ART=`<svg class="art" viewBox="0 0 340 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+ <defs>
+  <radialGradient id="hSun" cx="78%" cy="44%" r="45%"><stop offset="0" stop-color="#FFF1CF" stop-opacity=".95"/><stop offset=".18" stop-color="#F5D9A0" stop-opacity=".75"/><stop offset=".55" stop-color="#C9B79A" stop-opacity=".25"/><stop offset="1" stop-color="#8EA6BE" stop-opacity="0"/></radialGradient>
+  <linearGradient id="hMist" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DCE5EE" stop-opacity="0"/><stop offset="1" stop-color="#DCE5EE" stop-opacity=".55"/></linearGradient>
+  <linearGradient id="hShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2A4A72" stop-opacity=".55"/><stop offset=".55" stop-color="#2A4A72" stop-opacity=".12"/><stop offset="1" stop-color="#2A4A72" stop-opacity="0"/></linearGradient>
+ </defs>
+ <rect width="340" height="200" fill="url(#hSun)"/>
+ <circle cx="266" cy="88" r="13" fill="#FFF3D6" opacity=".95"/>
+ <path d="M0 118 L38 104 L70 112 L104 92 L138 106 L170 96 L206 110 L236 98 L270 108 L304 96 L340 104 V200 H0Z" fill="#8FA8C1" opacity=".55"/>
+ <rect y="100" width="340" height="40" fill="url(#hMist)"/>
+ <path d="M0 140 L30 126 L62 132 L96 116 L128 128 L160 120 L196 134 L226 122 L258 132 L288 120 L340 130 V200 H0Z" fill="#6F8DAD" opacity=".7"/>
+ <rect y="124" width="340" height="40" fill="url(#hMist)" opacity=".8"/>
+ <path d="M0 168 C40 156 80 160 120 152 C160 145 196 156 230 150 C262 144 300 150 340 140 V200 H0Z" fill="#4F6F94" opacity=".85"/>
+ <g fill="#3A587E">
+  <path d="M262 160 V150 h52 v10z"/><path d="M266 150 V140 h44 v10z"/>
+  <path d="M272 140 C272 118 282 104 288 90 C294 104 304 118 304 140z"/>
+  <path d="M276 122 h24" stroke="#4E6E95" stroke-width="1.2"/><path d="M279 110 h18" stroke="#4E6E95" stroke-width="1.2"/>
+  <circle cx="288" cy="88" r="3.2"/><path d="M288 85 V70" stroke="#3A587E" stroke-width="1.4"/>
+  <path d="M288 70 l12 3.5 l-12 3.5z" fill="#D9A55A"/>
+  <path d="M250 160 c2-10 8-14 8-22 c3 6 8 12 8 22z"/><path d="M312 160 c2-9 6-13 7-20 c2 6 6 11 7 20z"/>
+ </g>
+ <path d="M0 200 V184 C30 176 60 180 92 174 C130 167 168 178 210 172 C250 166 292 174 340 166 V200Z" fill="#34506F" opacity=".9"/>
+ <g fill="#2E4866"><path d="M222 186 c0-12 6-18 6-26 c0 8 6 14 6 26z"/><path d="M236 188 c0-9 5-14 5-21 c0 7 5 12 5 21z"/><path d="M318 184 c0-13 7-20 7-29 c0 9 7 16 7 29z"/><path d="M304 186 c0-9 5-14 5-20 c0 6 5 11 5 20z"/></g>
+ <rect width="340" height="200" fill="url(#hShade)"/>
+</svg>`;
+</script>
+<script src="app.js"></script>
+</body>
+</html>

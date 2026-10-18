@@ -9,3 +9,9 @@ Works in any browser and installs like an app on Android, iPhone and desktop.
 - Temple sankalp readings, poojas and seva bookings are **not live yet**; they will open with temple trusts' agreement, paid directly to each trust.
 
 Prayer and guidance, not guaranteed results.
+
+## Apps
+- **Devotee app**: <https://narsimha1729.github.io/krupamarg/>
+- **Priest app**: <https://narsimha1729.github.io/krupamarg/priest/> — today's sankalps, read-aloud mode, devotee details, proofs, calendar, print list. English, हिंदी, मराठी.
+
+Sharing between them needs the one-time Firebase setup in [SETUP.md](SETUP.md). Until then the devotee app stays on-device and the priest app offers sample data.

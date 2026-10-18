@@ -1,0 +1,53 @@
+rules_version = '2';
+// Krupamarg security rules.
+// - A devotee (signed in anonymously) owns temples/{t}/devotees/{their uid} and decides which temples get it.
+// - A priest can read only devotees of temples the admin has approved him for (priests/{uid}.temples).
+// - Priest notes are never visible to devotees.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function priest() { return get(/databases/$(database)/documents/priests/$(request.auth.uid)).data; }
+    function isPriest() {
+      return signedIn() && exists(/databases/$(database)/documents/priests/$(request.auth.uid)) && priest().approved == true;
+    }
+    function isPriestOf(t) { return isPriest() && priest().temples.hasAny([t]); }
+
+    // Priest profiles: a priest may create his own pending request; only the admin (Firebase console) approves.
+    match /priests/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.approved == false
+        && request.resource.data.temples == []
+        && request.resource.data.keys().hasOnly(['name', 'email', 'requested', 'approved', 'temples', 'createdAt']);
+      allow update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.approved == resource.data.approved
+        && request.resource.data.temples == resource.data.temples;
+      allow delete: if false;
+    }
+
+    match /temples/{t} {
+      // Devotee sankalp shared with this temple.
+      match /devotees/{uid} {
+        allow read: if (signedIn() && request.auth.uid == uid) || isPriestOf(t);
+        allow create, update: if signedIn() && request.auth.uid == uid
+          && request.resource.data.consent == true
+          && request.resource.data.size() < 60;
+        allow delete: if signedIn() && request.auth.uid == uid;
+
+        // Proofs: readings, photos and messages from priests. Devotee can read; only priests write.
+        match /proofs/{pid} {
+          allow read: if (signedIn() && request.auth.uid == uid) || isPriestOf(t);
+          allow create: if isPriestOf(t) && request.resource.data.by == request.auth.uid;
+          allow delete: if (isPriestOf(t) && resource.data.by == request.auth.uid) || (signedIn() && request.auth.uid == uid);
+          allow update: if false;
+        }
+      }
+
+      // Private notes, one doc per devotee; priests of the temple only.
+      match /notes/{uid} {
+        allow read, write: if isPriestOf(t);
+      }
+    }
+  }
+}

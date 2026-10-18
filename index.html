@@ -233,6 +233,8 @@ textarea{min-height:84px;resize:vertical}
 </div>
 <div class="toast" id="toast" hidden></div>
 
+<script src="firebase-config.js"></script>
+<script type="module" src="cloud.js"></script>
 <script>
 const WISHES=[['exam','Exam','परीक्षा'],['job','Job','नोकरी'],['marriage','Marriage','विवाह'],['family','Family','कुटुंब'],['health','Health','आरोग्य'],['business','Business','व्यवसाय'],['home','New home','नवीन घर'],['travel','Travel','प्रवास']];
 const WISH_DAILY={exam:'Saraswati vandana before study',job:'Hanuman Chalisa',marriage:'Gauri–Shankar prayer',family:'Evening aarti with the family',health:'Mahamrityunjaya jap × 11, alongside your doctor’s treatment',business:'Lakshmi aarti at opening time',home:'Ganesh vandana',travel:'Hanuman Chalisa'};
@@ -318,11 +320,42 @@ const SAMPLE_USER={name:'Aarav Patil',gender:'Male',dob:'2008-03-14',tob:'06:45'
 const BLANK_USER=()=>({name:'',gender:'Male',dob:'',tob:'',pob:'',city:'Pune',gotra:'',nakshatra:'',rashi:'',vedicManual:false,family:[],wish:'exam',wishText:'',deadline:iso(addDays(today,45)),consent:false});
 const STORE_KEY='krupamarg.v1',OLD_KEY='icchamarg.v1';
 function freshState(){return{screen:'welcome',tab:'home',regStep:0,user:BLANK_USER(),sites:[],priests:[],paid:false,demo:false,startedOn:iso(today),done:{},
- mantra:0,mantraDay:iso(today),mantraDays:[],outcome:null,offerings:[],remind:'06:30',lang:'English'}}
+ mantra:0,mantraDay:iso(today),mantraDays:[],outcome:null,offerings:[],remind:'06:30',lang:'English',share:{on:false,temples:[],whatsapp:'',allowWa:false,last:0}}}
 function loadState(){try{const raw=localStorage.getItem(STORE_KEY)||localStorage.getItem(OLD_KEY);if(!raw)return null;const s=JSON.parse(raw);if(!s||!s.user)return null;
- const st={...freshState(),...s};if(!['welcome','register','sites','priests','review','app'].includes(st.screen))st.screen=st.paid?'app':'welcome';
+ const st={...freshState(),...s};if(!st.share)st.share=freshState().share;if(!['welcome','register','sites','priests','review','app'].includes(st.screen))st.screen=st.paid?'app':'welcome';
  if(st.screen==='app'&&!st.paid)st.screen='welcome';return st}catch(e){return null}}
-function saveState(){if(S.demo)return;try{localStorage.setItem(STORE_KEY,JSON.stringify(S))}catch(e){}}
+function saveState(){if(S.demo)return;try{localStorage.setItem(STORE_KEY,JSON.stringify(S))}catch(e){}queueSync()}
+/* ---------- temple sharing (cloud) ---------- */
+let syncTimer=null,lastPayload='';
+const cloudOK=()=>window.KMCloud&&window.KMCloud.ready;
+function sharePayload(){const u=S.user,p=plan(),t=iso(today),todays=p.filter(x=>x.date===t);
+ return{name:u.name,gender:u.gender,dob:u.dob,tob:u.tob,pob:u.pob,city:u.city,gotra:u.gotra,rashi:u.rashi,nakshatra:u.nakshatra,
+  family:u.family.map(f=>({name:f.name,rel:f.rel})),wish:u.wish,wishLabel:wishName(u.wish),wishText:u.wishText,deadline:u.deadline,startedOn:S.startedOn,
+  sites:S.sites,doneTotal:p.filter(x=>S.done[x.id]).length,planTotal:p.length,todayDone:todays.filter(x=>S.done[x.id]).length,todayTotal:todays.length,
+  mantraToday:S.mantra,streak:streak(),outcome:S.outcome||null,lang:S.lang,
+  whatsapp:S.share.allowWa&&/^\d{10}$/.test(S.share.whatsapp)?S.share.whatsapp:'',consentAt:S.share.since||Date.now()}}
+function queueSync(){if(S.demo||!S.share||!S.share.on||!S.paid||!cloudOK())return;clearTimeout(syncTimer);syncTimer=setTimeout(doSync,1500)}
+async function doSync(force){if(!S.share.on||!cloudOK())return;const pl=sharePayload(),key=JSON.stringify([S.sites,pl]);if(!force&&key===lastPayload)return;
+ try{await window.KMCloud.sync(S.sites,pl,S.share.temples||[]);lastPayload=key;S.share.temples=[...S.sites];S.share.last=Date.now();try{localStorage.setItem(STORE_KEY,JSON.stringify(S))}catch(e){}}
+ catch(e){console.warn('sync failed',e)}}
+window.addEventListener('kmcloud',()=>{if(S.share&&S.share.on)doSync(true);if(['priests','proofs'].includes(S.tab)||S.screen==='proofs')render()});
+let proofCache=null;
+async function loadProofs(){if(!cloudOK()||!S.share.on)return;try{proofCache=await window.KMCloud.proofs(S.share.temples.length?S.share.temples:S.sites)}catch(e){proofCache=[]}if(S.screen==='proofs')render()}
+function shareCard(){const sh=S.share,names=S.sites.map(x=>site(x).name).join(', ');
+ if(S.demo)return'<div class="card"><h3>Share with temple priests</h3><p class="small muted">Available once you start your own sankalp.</p></div>';
+ if(!window.KMCloud||!window.KMCloud.configured)return`<div class="card" style="border:2px dashed var(--line)"><div class="row between"><h3>Temple priests</h3><span class="pill warn">Opening soon</span></div>
+  <p class="small muted">Soon you can share your sankalp with the priests of your temples. They will read it in your name and send you proof here.</p></div>`;
+ if(sh.on)return`<div class="card"><div class="card-head"><span class="ico">${ic('lotus')}</span><h3>Shared with priests</h3><span class="pill ok">On</span></div>
+  <p class="small muted">Priests at <strong>${esc(names)}</strong> can see your name, family, birth and Vedic details, and your sankalp${sh.allowWa&&sh.whatsapp?', and can WhatsApp you on +91 '+esc(sh.whatsapp):''}. It updates as you go.</p>
+  <p class="tiny muted">${sh.last?'Last updated '+new Date(sh.last).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'}):'Updating…'}</p>
+  <div class="grid2"><button data-go="proofs">See proofs</button><button data-act="unshare" style="color:var(--err)">Stop sharing</button></div></div>`;
+ return`<div class="card"><div class="card-head"><span class="ico">${ic('lotus')}</span><h3>Share with temple priests</h3></div>
+  <p class="small muted">Let the priests at <strong>${esc(names)}</strong> read your sankalp in your name and send you proof. They will see your name, family, birth and Vedic details, and your wish.</p>
+  <label class="check" for="allowWa"><input type="checkbox" id="allowWa" ${sh.allowWa?'checked':''}> Allow priests to WhatsApp me</label>
+  <label class="field" for="waNum" id="waBox" ${sh.allowWa?'':'hidden'}>WhatsApp number<input id="waNum" inputmode="numeric" maxlength="10" placeholder="10-digit number" value="${esc(sh.whatsapp)}"></label>
+  <label class="check" for="shareOk"><input type="checkbox" id="shareOk"> I agree to share these details with priests of these temples. I can stop anytime.</label>
+  <button class="btn-primary btn-block" data-act="share-on">Share my sankalp</button></div>`}
+
 let S=loadState()||freshState();
 if(S.mantraDay!==iso(today)){S.mantra=0;S.mantraDay=iso(today)}
 function startDemo(){S={...freshState(),demo:true,screen:'app',tab:'home',paid:true,user:JSON.parse(JSON.stringify(SAMPLE_USER)),sites:['grish','siddhi'],priests:[],
@@ -374,6 +407,7 @@ function vWelcome(){return `
  </div>
  <div class="row" style="justify-content:center;gap:6px"><span class="pill">मराठी</span><span class="pill">हिंदी</span><span class="pill">ગુજરાતી</span><span class="pill ok">English</span></div>
  ${installCard()}
+ <a class="btn-ghost" style="align-self:center;text-decoration:none" href="priest/">Temple priest? Open the priest app →</a>
 </section>`}
 function installCard(){if(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)return'';
  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -502,7 +536,7 @@ function tHome(){const p=plan(),t=iso(today),todays=p.filter(x=>x.date===t),next
  <div class="card"><div class="card-head"><span class="ico">${ic('lotus')}</span><h3>Today's devotion</h3><span class="pill ${doneN===todays.length&&todays.length?'ok':''}">${doneN} of ${todays.length} done</span></div>${todoList(todays,false)}</div>
  <div class="grid2">
   <button class="card tile" data-go="mantra"><span class="ico">${ic('mala')}</span><span><span class="big">${S.mantra%108}<span style="font-size:15px;color:var(--muted)">/108</span></span><br><span class="small muted">Mantra counter · ${Math.floor(S.mantra/108)} malas today</span></span></button>
-  <button class="card tile" data-go="proofs"><span class="ico">${ic('video')}</span><span><strong>Temple proofs</strong><br><span class="small muted">Opening soon</span></span></button>
+  <button class="card tile" data-go="proofs"><span class="ico">${ic('video')}</span><span><strong>Temple proofs</strong><br><span class="small muted">${S.share&&S.share.on?"From your priests":"Share to receive"}</span></span></button>
   <button class="card tile" data-go="vrat"><span class="ico">${ic('moon')}</span><span><strong>Vrat finder</strong><br><span class="small muted">Free · for any wish</span></span></button>
   <button class="card tile" data-go="offer"><span class="ico">${ic('hand')}</span><span><strong>Seva and daan</strong><br><span class="small muted">Bookings opening soon</span></span></button>
  </div>
@@ -550,9 +584,7 @@ function tPriests(){return `<section class="screen stack"><h1>Your temples</h1>
   <p class="small muted">${s.place} · ${s.deity}</p><dl class="kv"><dt>Aarti</dt><dd>${s.aarti}</dd><dt>Services</dt><dd>${s.services}</dd><dt>Mantra</dt><dd>${s.mantra}</dd></dl>
   <div class="grid2"><a class="btn" style="display:grid;place-items:center;text-decoration:none" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name+', '+s.place)}">Directions</a><button data-act="share" data-share="${esc(s.name)}">Share</button></div></div>`).join('')}
  <button data-go="sites">Change sites</button>
- <div class="card" style="border:2px dashed var(--line)"><div class="row between"><h3>Priests</h3><span class="pill warn">Opening soon</span></div>
-  <p class="small muted">Priests verified by each temple trust will be able to read your sankalp in your name, send video proof and perform poojas you book, paid directly to the trust.</p>
- </div>
+ ${shareCard()}
  <p class="tiny muted">Aarti timings are typical and can change on festival days. Check with the temple before travelling.</p></section>`}
 function tProfile(){const u=S.user;return `<section class="screen stack">${demoBar()}<h1>Profile</h1>
  <div class="card"><div class="row between"><h3>${esc(u.name)}</h3><button class="btn-ghost" data-go="register0">Edit</button></div>
@@ -576,10 +608,21 @@ function vMantra(){const s=S.sites.length?site(S.sites[0]):{mantra:'ॐ नम�
  <button class="mantra" data-act="count" aria-label="Count one chant"><span class="n">${S.mantra%108}</span><span>of 108</span></button>
  <div class="grid2"><div class="card"><strong style="font-size:24px">${Math.floor(S.mantra/108)}</strong><span class="small muted">Malas today</span></div><div class="card"><strong style="font-size:24px">${streak()}</strong><span class="small muted">Days in a row</span></div></div>
  <button data-act="resetMantra">Reset</button></section>`}
-function vProofs(){return `<section class="screen stack"><button class="btn-ghost" data-go="home">← Back</button><h1>Proofs from temples</h1>
- <div class="card"><div class="video">Temple videos will appear here</div><div class="row between"><strong>Opening soon</strong><span class="pill warn">Not live yet</span></div>
-  <p class="small muted">When temples start accepting sankalps, every reading, pooja and prasad will come with a timestamped video, photo or courier tracking, shown here.</p></div>
-</section>`}
+function vProofs(){
+ if(!S.share||!S.share.on||!cloudOK())return `<section class="screen stack"><button class="btn-ghost" data-go="home">← Back</button><h1>Proofs from temples</h1>
+ <div class="card"><div class="video">Readings and photos from priests appear here</div><div class="row between"><strong>${S.share&&S.share.on?'Connecting…':'Not shared yet'}</strong><span class="pill warn">${S.share&&S.share.on?'Please wait':'Off'}</span></div>
+  <p class="small muted">Share your sankalp with your temple's priests from the <strong>Temples</strong> tab. Each time a priest reads your sankalp or sends a photo or blessing, it appears here with the date and time.</p>
+  <button data-tab="priests">Go to Temples</button></div></section>`;
+ if(proofCache===null){loadProofs();return `<section class="screen stack"><button class="btn-ghost" data-go="home">← Back</button><h1>Proofs from temples</h1><p class="muted">Loading…</p></section>`}
+ const kind={reading:'Sankalp read in your name',photo:'Photo from the temple',message:'Blessing from the priest'};
+ return `<section class="screen stack"><button class="btn-ghost" data-go="home">← Back</button><h1>Proofs from temples</h1>
+ <p class="small muted">Sent by priests at your temples, with date and time.</p>
+ ${proofCache.length?proofCache.map(x=>`<div class="card">${x.photo?`<img src="${x.photo}" alt="Photo from ${esc(site(x.temple)?site(x.temple).name:'temple')}" style="width:100%;border-radius:12px;display:block">`:''}
+  <div class="row between" style="flex-wrap:nowrap"><strong>${kind[x.type]||'Update'}</strong><span class="pill ok">Received</span></div>
+  ${x.text?`<p class="small">${esc(x.text)}</p>`:''}
+  <span class="tiny muted">${esc(x.byName||'Priest')} · ${esc(site(x.temple)?site(x.temple).name:x.temple)} · ${x.at?new Date(x.at).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'}):''}</span></div>`).join('')
+ :'<div class="card"><p class="small muted">Nothing yet. When a priest reads your sankalp or sends a photo, it appears here.</p></div>'}
+ <button data-act="refreshProofs">Refresh</button></section>`}
 function vVrat(){const w=S.vratWish||S.user.wish;return `<section class="screen stack"><button class="btn-ghost" data-go="home">← Back</button><span class="pill ok" style="align-self:flex-start">Free</span><h1>Find the right vrat</h1>
  <div class="chips">${WISHES.map(x=>`<button class="chip" data-vrat="${x[0]}" aria-pressed="${w===x[0]}">${x[1]}</button>`).join('')}</div>
  <div class="card"><p class="eyebrow">Commonly followed for ${wishName(w).toLowerCase()}</p><p style="font-size:17px">${VRAT[w]}</p><p class="small muted">Ask your priest to confirm the right practice for you.</p></div>
@@ -624,7 +667,7 @@ function readReg(){const g=id=>{const e=document.getElementById(id);return e?e.v
  if(S.regStep===0){u.name=g('name')||u.name;u.gender=g('gender');u.city=g('city');u.dob=g('dob')||u.dob;u.tob=g('tob');u.pob=g('pob');syncVedic()}
  if(S.regStep===1){u.gotra=g('gotra');u.vedicManual=document.getElementById('vedicManual').checked;if(u.vedicManual){u.rashi=g('rashi');u.nakshatra=g('nakshatra')}else syncVedic()}
  if(S.regStep===3){u.wishText=g('wishText');u.deadline=g('deadline')||u.deadline;u.consent=document.getElementById('consent').checked}}
-function go(k){if(k==='demoHome')startDemo();else if(k==='login'||k==='logout'||k==='welcome')S.screen='welcome';else if(k.startsWith('register')){S.screen='register';S.regStep=+k.slice(8)}
+function go(k){if(k==='proofs')proofCache=null;if(k==='demoHome')startDemo();else if(k==='login'||k==='logout'||k==='welcome')S.screen='welcome';else if(k.startsWith('register')){S.screen='register';S.regStep=+k.slice(8)}
  else if(k==='home'){S.screen='app';S.tab='home'}else if(k==='sankalpTab'){S.screen='app';S.tab='sankalp'}else S.screen=k;render()}
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
  if(d.go){e.preventDefault();go(d.go);return}
@@ -643,7 +686,13 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
  if(a==='resetMantra'){S.mantra=0;render()}
  if(a==='del')$('#delBox').innerHTML='<p class="small">Delete your profile, sankalp and family details? This cannot be undone.</p><div class="grid2"><button data-act="delNo">Keep</button><button class="btn-primary" data-act="delYes">Delete</button></div>';
  if(a==='delNo')render();
- if(a==='delYes'){try{localStorage.removeItem(STORE_KEY);localStorage.removeItem(OLD_KEY)}catch(e){}S=freshState();planCache=null;render();toast('All your data on this device is deleted.')}
+ if(a==='delYes'){if(S.share&&S.share.on&&cloudOK())window.KMCloud.unshare([...new Set([...(S.share.temples||[]),...S.sites])]).catch(()=>{});try{localStorage.removeItem(STORE_KEY);localStorage.removeItem(OLD_KEY)}catch(e){}S=freshState();planCache=null;render();toast('All your data on this device is deleted.')}
+ if(a==='share-on'){const ok=document.getElementById('shareOk').checked,allow=document.getElementById('allowWa').checked,wa=(document.getElementById('waNum').value||'').replace(/\D/g,'');
+  if(!ok){toast('Please tick the box to agree.');return}if(allow&&wa.length!==10){toast('Enter a 10-digit WhatsApp number.');return}
+  S.share={on:true,temples:S.share.temples||[],whatsapp:allow?wa:'',allowWa:allow,since:Date.now(),last:0};saveState();render();doSync(true).then(()=>{render();toast('Shared with your temple priests.')})}
+ if(a==='unshare'){const t=[...new Set([...(S.share.temples||[]),...S.sites])];S.share={on:false,temples:[],whatsapp:'',allowWa:false,last:0};proofCache=null;saveState();render();
+  if(cloudOK())window.KMCloud.unshare(t).then(()=>toast('Sharing stopped. Your details were removed from the temples.'))}
+ if(a==='refreshProofs'){proofCache=null;render()}
  if(a==='demo'){startDemo();render()}
  if(a==='leaveDemo')leaveDemo();
  if(a==='newSankalp'){S.outcome=null;S.done={};S.user.wishText='';S.user.deadline=iso(addDays(today,45));planCache=null;go('register3')}
@@ -663,6 +712,7 @@ document.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
   S.regStep++;render()}});
 document.addEventListener('change',e=>{const t=e.target;
  if(t.id==='lang'){S.lang=t.value;render();return}
+ if(t.id==='allowWa'){S.share.allowWa=t.checked;document.getElementById('waBox').hidden=!t.checked;return}
  if(t.id==='remind'){S.remind=t.value;saveState();return}
  if(t.dataset.todo){S.done[t.dataset.todo]=t.checked;render()}
  if(t.id==='vedicManual')document.getElementById('vedicFields').hidden=!t.checked;
