@@ -1,6 +1,6 @@
 // Krupamarg service worker: app shells cached for offline use (devotee app and priest app);
 // Google Fonts cached on first load; config and Firebase traffic always go to the network.
-const CACHE = 'krupamarg-v6';
+const CACHE = 'krupamarg-v7';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './cloud.js', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png',
   './priest/', './priest/index.html', './priest/manifest.webmanifest'];
 self.addEventListener('install', e => {

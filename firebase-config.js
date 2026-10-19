@@ -1,14 +1,9 @@
-// Krupamarg cloud connection.
-// Paste the Firebase web-app config here (Firebase console → Project settings → Your apps → Web app → Config).
-// Until this is filled in, the devotee app keeps everything on the device and the priest app runs in sample mode.
-window.KM_FIREBASE = null;
-/* Example:
+// Krupamarg Firebase web config (public by design; access is enforced by firestore.rules).
 window.KM_FIREBASE = {
-  apiKey: "AIza...",
-  authDomain: "krupamarg.firebaseapp.com",
-  projectId: "krupamarg",
-  storageBucket: "krupamarg.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:1234567890:web:abc123"
+  apiKey: "AIzaSyBeRWthtUYqEMnU0rNdkQsrrjMfUm8zt5U",
+  authDomain: "krupamarg-e7579.firebaseapp.com",
+  projectId: "krupamarg-e7579",
+  storageBucket: "krupamarg-e7579.firebasestorage.app",
+  messagingSenderId: "89000256123",
+  appId: "1:89000256123:web:160ebc6645fc32ff3538de"
 };
-*/
